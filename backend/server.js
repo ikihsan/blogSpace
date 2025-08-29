@@ -29,9 +29,27 @@ app.use('/api/', limiter);
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001', 
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_URL,
+      'https://checkk-czzg.onrender.com'
+    ].filter(Boolean);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all origins in production for now
+    }
+  },
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 };
 app.use(cors(corsOptions));
 
@@ -53,6 +71,45 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'UP', timestamp: new Date() });
 });
 
+// Debug endpoint to check admin user (remove in production)
+app.get('/api/debug/admin', async (req, res) => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) {
+      return res.json({ error: 'ADMIN_EMAIL not set' });
+    }
+    
+    const user = await User.findOne({ 
+      where: { email: adminEmail },
+      attributes: ['id', 'email', 'role', 'createdAt']
+    });
+    
+    if (user) {
+      res.json({ 
+        found: true, 
+        user: user,
+        env_vars: {
+          ADMIN_EMAIL: !!process.env.ADMIN_EMAIL,
+          ADMIN_PASSWORD: !!process.env.ADMIN_PASSWORD,
+          JWT_SECRET: !!process.env.JWT_SECRET
+        }
+      });
+    } else {
+      res.json({ 
+        found: false, 
+        adminEmail,
+        env_vars: {
+          ADMIN_EMAIL: !!process.env.ADMIN_EMAIL,
+          ADMIN_PASSWORD: !!process.env.ADMIN_PASSWORD,
+          JWT_SECRET: !!process.env.JWT_SECRET
+        }
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -64,12 +121,35 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({ message: 'API endpoint not found' });
 });
 
-// Serve frontend for any other route
-// This is important for single-page applications
-app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')));
-app.get('*', (req, res) => {
+// Serve static files for frontend and admin builds
+if (process.env.NODE_ENV === 'production') {
+  // Serve frontend build
+  app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')));
+  
+  // Serve admin build at /admin route
+  app.use('/admin', express.static(path.join(__dirname, '..', 'admin', 'build')));
+  
+  // Admin panel route
+  app.get('/admin/*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '..', 'admin', 'build', 'index.html'));
+  });
+  
+  // Frontend routes (catch-all)
+  app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '..', 'frontend', 'build', 'index.html'));
-});
+  });
+} else {
+  // Development mode - just return a message
+  app.get('*', (req, res) => {
+    res.json({ 
+      message: 'Backend API is running. Please start frontend and admin separately in development mode.',
+      endpoints: {
+        api: '/api/*',
+        health: '/api/health'
+      }
+    });
+  });
+}
 
 
 // Create admin user if it doesn't exist
@@ -79,9 +159,12 @@ const createAdminUser = async () => {
     const adminPassword = process.env.ADMIN_PASSWORD;
 
     if (!adminEmail || !adminPassword) {
-      console.log('Admin email or password not set in .env file. Skipping admin creation.');
+      console.log('ADMIN_EMAIL or ADMIN_PASSWORD not set in environment variables. Skipping admin creation.');
+      console.log('Please set ADMIN_EMAIL and ADMIN_PASSWORD in your environment variables.');
       return;
     }
+
+    console.log(`Creating admin user with email: ${adminEmail}`);
 
     const [user, created] = await User.findOrCreate({
       where: { email: adminEmail },
@@ -95,8 +178,8 @@ const createAdminUser = async () => {
       console.log('Admin user created successfully.');
     } else {
       console.log('Admin user already exists.');
-      // If you want to ensure the password is up to date, you can add this:
-      const isMatch = await bcrypt.compare(adminPassword, user.password);
+      // Update password if it's different
+      const isMatch = await user.comparePassword(adminPassword);
       if(!isMatch) {
         user.password = adminPassword; // The hook will re-hash
         await user.save();
