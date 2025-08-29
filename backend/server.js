@@ -37,6 +37,7 @@ const corsOptions = {
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:3001',
+      'https://checkk-czzg.onrender.com',
       process.env.FRONTEND_URL,
       process.env.ADMIN_URL
     ].filter(Boolean);
