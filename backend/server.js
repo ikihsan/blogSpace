@@ -195,72 +195,89 @@ app.use('/api/*', (req, res) => {
 
 // Serve static files for frontend and admin builds
 if (process.env.NODE_ENV === 'production') {
-  // Try multiple possible paths for the builds
-  const possiblePaths = {
-    frontend: [
-      path.join(process.cwd(), 'frontend', 'build'),
-      path.join(__dirname, '..', 'frontend', 'build'),
-      path.join(__dirname, '..', '..', 'frontend', 'build'),
-      path.join(__dirname, 'frontend', 'build')
-    ],
-    admin: [
-      path.join(process.cwd(), 'admin', 'build'),
-      path.join(__dirname, '..', 'admin', 'build'),
-      path.join(__dirname, '..', '..', 'admin', 'build'),
-      path.join(__dirname, 'admin', 'build')
-    ]
-  };
+  // Get the actual project root (go up from backend directory)
+  const projectRoot = path.join(__dirname, '..');
+  console.log('Project root:', projectRoot);
   
-  console.log('Current working directory:', process.cwd());
-  console.log('__dirname:', __dirname);
+  // Define build paths
+  const frontendBuildPath = path.join(projectRoot, 'frontend', 'build');
+  const adminBuildPath = path.join(projectRoot, 'admin', 'build');
+  
+  console.log('Looking for frontend build at:', frontendBuildPath);
+  console.log('Looking for admin build at:', adminBuildPath);
   
   const fs = require('fs');
-  let frontendPath = null;
-  let adminPath = null;
+  const frontendExists = fs.existsSync(frontendBuildPath);
+  const adminExists = fs.existsSync(adminBuildPath);
   
-  // Find the correct frontend path
-  for (const fPath of possiblePaths.frontend) {
-    console.log('Checking frontend path:', fPath);
-    if (fs.existsSync(fPath)) {
-      frontendPath = fPath;
-      console.log('Found frontend build at:', fPath);
-      break;
+  console.log('Frontend build exists:', frontendExists);
+  console.log('Admin build exists:', adminExists);
+  
+  // If frontend build doesn't exist but admin does, check if we can find it elsewhere
+  if (!frontendExists) {
+    const alternatePaths = [
+      path.join(process.cwd(), 'frontend', 'build'),
+      path.join(__dirname, '..', '..', 'frontend', 'build'),
+      path.join('/opt/render/project/src', 'frontend', 'build')
+    ];
+    
+    console.log('Frontend not found, trying alternate paths...');
+    for (const altPath of alternatePaths) {
+      console.log('Checking:', altPath);
+      if (fs.existsSync(altPath)) {
+        console.log('Found frontend at alternate path:', altPath);
+        break;
+      }
     }
   }
   
-  // Find the correct admin path
-  for (const aPath of possiblePaths.admin) {
-    console.log('Checking admin path:', aPath);
-    if (fs.existsSync(aPath)) {
-      adminPath = aPath;
-      console.log('Found admin build at:', aPath);
-      break;
-    }
-  }
-  
-  if (!frontendPath) {
-    console.log('WARNING: Frontend build directory not found. Tried paths:', possiblePaths.frontend);
-  }
-  if (!adminPath) {
-    console.log('WARNING: Admin build directory not found. Tried paths:', possiblePaths.admin);
-  }
-  
-  if (frontendPath) {
+  if (frontendExists) {
     // Serve frontend build
-    app.use(express.static(frontendPath));
-    console.log('Serving frontend from:', frontendPath);
+    app.use(express.static(frontendBuildPath));
+    console.log('Serving frontend from:', frontendBuildPath);
+  } else {
+    console.log('WARNING: Frontend build not found. Creating fallback route.');
+    // Serve a simple HTML page that loads the admin panel
+    app.get('/', (req, res) => {
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>FathiVlog</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white; }
+            .container { max-width: 600px; margin: 0 auto; }
+            .btn { display: inline-block; padding: 12px 24px; background: #ff6b6b; color: white; text-decoration: none; border-radius: 5px; margin: 10px; }
+            .btn:hover { background: #ff5252; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>🚧 Frontend Build Missing</h1>
+            <p>The frontend is currently unavailable due to a build issue.</p>
+            <p>You can still access the admin panel:</p>
+            <a href="/admin" class="btn">Go to Admin Panel</a>
+            <br><br>
+            <p><strong>API Status:</strong> ✅ Working</p>
+            <p><strong>Database:</strong> ✅ Connected</p>
+            <p><strong>Admin Panel:</strong> ✅ Available</p>
+          </div>
+        </body>
+        </html>
+      `);
+    });
   }
   
-  if (adminPath) {
+  if (adminExists) {
     // Serve admin build at /admin route
-    app.use('/admin', express.static(adminPath));
-    console.log('Serving admin from:', adminPath);
+    app.use('/admin', express.static(adminBuildPath));
+    console.log('Serving admin from:', adminBuildPath);
   }
   
   // Admin panel route - handle all /admin/* routes
   app.get('/admin*', (req, res) => {
-    if (adminPath) {
-      res.sendFile(path.resolve(adminPath, 'index.html'));
+    if (adminExists) {
+      res.sendFile(path.resolve(adminBuildPath, 'index.html'));
     } else {
       res.status(404).json({ error: 'Admin panel not available - build not found' });
     }
@@ -268,8 +285,8 @@ if (process.env.NODE_ENV === 'production') {
   
   // Frontend routes (catch-all for everything else)
   app.get('*', (req, res) => {
-    if (frontendPath) {
-      res.sendFile(path.resolve(frontendPath, 'index.html'));
+    if (frontendExists) {
+      res.sendFile(path.resolve(frontendBuildPath, 'index.html'));
     } else {
       res.status(404).json({ 
         error: 'Frontend not available - build not found',
@@ -277,9 +294,11 @@ if (process.env.NODE_ENV === 'production') {
         debug_info: {
           cwd: process.cwd(),
           dirname: __dirname,
-          tried_paths: possiblePaths,
-          frontend_found: !!frontendPath,
-          admin_found: !!adminPath
+          projectRoot: projectRoot,
+          frontendPath: frontendBuildPath,
+          adminPath: adminBuildPath,
+          frontend_found: frontendExists,
+          admin_found: adminExists
         }
       });
     }

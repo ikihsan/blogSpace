@@ -11,12 +11,12 @@
     "build-admin": "cd admin && npm run build",
     "install-all": "npm run install-backend && npm run install-frontend && npm run install-admin",
     "build-only": "npm run build-frontend && npm run build-admin",
-    "build": "npm run install-all && npm run build-only",
+    "build": "npm run install-all && npm run build-only && echo 'Build completed successfully'",
     "start": "cd backend && npm start",
     "dev-backend": "cd backend && npm run dev",
     "dev-frontend": "cd frontend && npm start",
     "dev-admin": "cd admin && npm start",
-    "postbuild": "echo 'Build verification:' && node -e \"console.log('Frontend build exists:', require('fs').existsSync('./frontend/build')); console.log('Admin build exists:', require('fs').existsSync('./admin/build')); if(require('fs').existsSync('./frontend/build')) { console.log('Frontend build files:'); console.log(require('fs').readdirSync('./frontend/build')); } if(require('fs').existsSync('./admin/build')) { console.log('Admin build files:'); console.log(require('fs').readdirSync('./admin/build')); }\""
+    "postbuild": "echo 'Build verification:' && node -e \"const fs = require('fs'); console.log('Frontend build exists:', fs.existsSync('./frontend/build')); console.log('Admin build exists:', fs.existsSync('./admin/build')); if(fs.existsSync('./frontend/build')) { console.log('Frontend build files:', fs.readdirSync('./frontend/build')); } if(fs.existsSync('./admin/build')) { console.log('Admin build files:', fs.readdirSync('./admin/build')); }\""
   },
   "engines": {
     "node": ">=18.0.0"
