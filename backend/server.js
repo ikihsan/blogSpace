@@ -164,18 +164,23 @@ app.get('/api/debug/deployment', (req, res) => {
     }
   };
 
+  // Let's check the actual Render structure
   const info = {
     cwd: process.cwd(),
     dirname: __dirname,
     env: process.env.NODE_ENV,
     paths: {
       currentDir: checkPath('.'),
-      frontendBuild: checkPath('./frontend/build'),
-      adminBuild: checkPath('./admin/build'),
+      parentDir: checkPath('..'),
+      grandparentDir: checkPath('../..'),
+      projectSrc: checkPath('/opt/render/project/src'),
+      projectRoot: checkPath('/opt/render/project'),
+      frontendFromSrc: checkPath('/opt/render/project/src/frontend/build'),
+      adminFromSrc: checkPath('/opt/render/project/src/admin/build'),
+      frontendFromProject: checkPath('/opt/render/project/frontend/build'),
+      adminFromProject: checkPath('/opt/render/project/admin/build'),
       backendRelativeFrontend: checkPath(path.join(__dirname, '..', 'frontend', 'build')),
-      backendRelativeAdmin: checkPath(path.join(__dirname, '..', 'admin', 'build')),
-      cwdFrontend: checkPath(path.join(process.cwd(), 'frontend', 'build')),
-      cwdAdmin: checkPath(path.join(process.cwd(), 'admin', 'build'))
+      backendRelativeAdmin: checkPath(path.join(__dirname, '..', 'admin', 'build'))
     }
   };
   
@@ -195,9 +200,21 @@ app.use('/api/*', (req, res) => {
 
 // Serve static files for frontend and admin builds
 if (process.env.NODE_ENV === 'production') {
-  // Get the actual project root (go up from backend directory)
-  const projectRoot = path.join(__dirname, '..');
-  console.log('Project root:', projectRoot);
+  const fs = require('fs');
+  
+  // Determine the correct project root based on Render's structure
+  let projectRoot;
+  if (process.cwd().includes('/opt/render/project/src/backend')) {
+    // Render puts code in /opt/render/project/src/
+    projectRoot = '/opt/render/project/src';
+  } else {
+    // Standard structure
+    projectRoot = path.join(__dirname, '..');
+  }
+  
+  console.log('Detected project root:', projectRoot);
+  console.log('Current working directory:', process.cwd());
+  console.log('__dirname:', __dirname);
   
   // Define build paths
   const frontendBuildPath = path.join(projectRoot, 'frontend', 'build');
@@ -206,19 +223,18 @@ if (process.env.NODE_ENV === 'production') {
   console.log('Looking for frontend build at:', frontendBuildPath);
   console.log('Looking for admin build at:', adminBuildPath);
   
-  const fs = require('fs');
   const frontendExists = fs.existsSync(frontendBuildPath);
   const adminExists = fs.existsSync(adminBuildPath);
   
   console.log('Frontend build exists:', frontendExists);
   console.log('Admin build exists:', adminExists);
   
-  // If frontend build doesn't exist but admin does, check if we can find it elsewhere
+  // If frontend build doesn't exist, try alternative paths
   if (!frontendExists) {
     const alternatePaths = [
-      path.join(process.cwd(), 'frontend', 'build'),
-      path.join(__dirname, '..', '..', 'frontend', 'build'),
-      path.join('/opt/render/project/src', 'frontend', 'build')
+      path.join(__dirname, '..', 'frontend', 'build'),
+      path.join(process.cwd(), '..', 'frontend', 'build'),
+      '/opt/render/project/frontend/build'
     ];
     
     console.log('Frontend not found, trying alternate paths...');
@@ -226,6 +242,9 @@ if (process.env.NODE_ENV === 'production') {
       console.log('Checking:', altPath);
       if (fs.existsSync(altPath)) {
         console.log('Found frontend at alternate path:', altPath);
+        // Update the path
+        frontendBuildPath = altPath;
+        frontendExists = true;
         break;
       }
     }
@@ -236,7 +255,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(frontendBuildPath));
     console.log('Serving frontend from:', frontendBuildPath);
   } else {
-    console.log('WARNING: Frontend build not found. Creating fallback route.');
+    console.log('WARNING: Frontend build not found at any location');
     // Serve a simple HTML page that loads the admin panel
     app.get('/', (req, res) => {
       res.send(`
@@ -261,6 +280,8 @@ if (process.env.NODE_ENV === 'production') {
             <p><strong>API Status:</strong> ✅ Working</p>
             <p><strong>Database:</strong> ✅ Connected</p>
             <p><strong>Admin Panel:</strong> ✅ Available</p>
+            <br>
+            <p><small>Debug info: Project root: ${projectRoot}</small></p>
           </div>
         </body>
         </html>
