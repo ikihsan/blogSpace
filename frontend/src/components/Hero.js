@@ -47,16 +47,7 @@ const Hero = () => {
           </Link>
         </div>
       </motion.div>
-      <motion.div
-        className="absolute bottom-10 z-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 0.5 }}
-      >
-        <button onClick={scrollToContent} className="animate-bounce">
-          <ChevronDownIcon className="h-8 w-8 text-gray-400" />
-        </button>
-      </motion.div>
+  {/* Removed bottom left bouncing button */}
     </div>
   );
 };
