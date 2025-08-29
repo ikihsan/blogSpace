@@ -89,14 +89,38 @@ const Dashboard = () => {
         <div className="bg-gray-800 p-6 rounded-lg">
           <h2 className="text-xl font-bold mb-4">Recent Blogs</h2>
           <ul>
-            {stats.recentBlogs.map(blog => (
-              <li key={blog.id} className="flex justify-between items-center py-2 border-b border-gray-700">
-                <Link to={`/blogs/edit/${blog.id}`} className="hover:text-indigo-400">{blog.title}</Link>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  blog.status === 'published' ? 'bg-green-500 text-green-900' : 'bg-yellow-500 text-yellow-900'
-                }`}>{blog.status}</span>
-              </li>
-            ))}
+            {stats.recentBlogs.map(blog => {
+              // Determine image URL
+              let imageUrl = '';
+              if (blog.images && blog.images.length > 0) {
+                // If imageUrl is relative, prepend API base URL
+                const rawUrl = blog.images[0].imageUrl;
+                if (rawUrl.startsWith('http')) {
+                  imageUrl = rawUrl;
+                } else {
+                  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || '';
+                  imageUrl = `${API_BASE_URL}${rawUrl}`;
+                }
+              } else {
+                imageUrl = 'https://via.placeholder.com/60x60?text=No+Image';
+              }
+              return (
+                <li key={blog.id} className="flex justify-between items-center py-2 border-b border-gray-700">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={imageUrl}
+                      alt={blog.title}
+                      className="w-10 h-10 object-cover rounded"
+                      onError={e => { e.target.src = 'https://via.placeholder.com/60x60?text=No+Image'; }}
+                    />
+                    <Link to={`/blogs/edit/${blog.id}`} className="hover:text-indigo-400">{blog.title}</Link>
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    blog.status === 'published' ? 'bg-green-500 text-green-900' : 'bg-yellow-500 text-yellow-900'
+                  }`}>{blog.status}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
