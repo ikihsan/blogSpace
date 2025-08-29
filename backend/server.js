@@ -38,8 +38,10 @@ const corsOptions = {
       'http://localhost:3000',
       'http://localhost:3001',
       'https://checkk-czzg.onrender.com',
+      'https://fathii.coms.codes/',
       process.env.FRONTEND_URL,
       process.env.ADMIN_URL
+
     ].filter(Boolean);
 
     // Add CORS_ORIGIN if set (comma-separated list)

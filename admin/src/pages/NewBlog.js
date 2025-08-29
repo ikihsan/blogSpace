@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import { DocumentTextIcon, PhotoIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+// Removed icons for cleaner look
 import { Link } from 'react-router-dom';
 
 const NewBlog = () => {
@@ -73,11 +73,11 @@ const NewBlog = () => {
               to="/blogs"
               className="inline-flex items-center text-gray-400 hover:text-white transition-colors duration-200"
             >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              {/* Icon removed for cleaner look */}
               Back to Blogs
             </Link>
             <div className="flex items-center space-x-3">
-              <DocumentTextIcon className="h-5 w-5 text-indigo-400" />
+              {/* Icon removed for cleaner look */}
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                   Create New Blog
@@ -164,7 +164,7 @@ const NewBlog = () => {
           >
             <label htmlFor="images" className="block text-sm font-semibold text-gray-200 mb-3">
               <div className="flex items-center">
-                <PhotoIcon className="h-5 w-5 mr-2 text-indigo-400" />
+                {/* Icon removed for cleaner look */}
                 Images (Optional - Max 3)
               </div>
             </label>

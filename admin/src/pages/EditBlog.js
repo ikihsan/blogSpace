@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-// Removed icons for cleaner look
 import { Link } from 'react-router-dom';
 
 const fetchBlog = async (id) => {
@@ -221,7 +220,7 @@ const EditBlog = () => {
           </motion.div>
 
           {/* Current Images */}
-          {blog.images && blog.images.length > 0 && (
+          {blog.images && blog.images.length > 0 ? (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -229,7 +228,6 @@ const EditBlog = () => {
             >
               <label className="block text-sm font-semibold text-gray-200 mb-3">
                 <div className="flex items-center">
-                  {/* Icon removed for cleaner look */}
                   Current Images
                 </div>
               </label>
@@ -250,6 +248,26 @@ const EditBlog = () => {
               <p className="text-xs text-gray-500 mt-2">
                 These images will be replaced if you upload new ones below.
               </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+              className="mb-4"
+            >
+              <label className="block text-sm font-semibold text-gray-200 mb-3">
+                <div className="flex items-center">
+                  No images uploaded for this blog.
+                </div>
+              </label>
+              <button
+                type="button"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                onClick={() => document.getElementById('images')?.focus()}
+              >
+                Upload Images
+              </button>
             </motion.div>
           )}
 
