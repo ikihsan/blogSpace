@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 
 const Sidebar = () => {
   const sidebarLinks = [
-    { to: '/', label: 'Dashboard', icon: '📊', exact: true },
-    { to: '/blogs', label: 'Manage Blogs', icon: '📝' },
-    { to: '/blogs/new', label: 'New Blog', icon: '✏️' },
+  { to: '/', label: 'Dashboard', exact: true },
+  { to: '/blogs', label: 'Manage Blogs' },
+  { to: '/blogs/new', label: 'New Blog' },
   ];
 
   return (
@@ -37,7 +37,7 @@ const Sidebar = () => {
                       : 'text-gray-300 hover:bg-gray-700/50 hover:text-white border border-transparent hover:border-gray-600'
                   }`}
                 >
-                  <span className="text-xl">{link.icon}</span>
+                  {/* Removed icon for cleaner sidebar */}
                   <span className="font-medium">{link.label}</span>
                   {isActive && (
                     <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>

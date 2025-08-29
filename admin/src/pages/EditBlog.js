@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import { PhotoIcon, ArrowLeftIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+// Removed icons for cleaner look
 import { Link } from 'react-router-dom';
 
 const fetchBlog = async (id) => {
@@ -99,9 +99,7 @@ const EditBlog = () => {
         <div className="max-w-4xl mx-auto">
           <div className="bg-red-900/20 border border-red-700/50 rounded-2xl p-8 text-center">
             <div className="text-red-400 mb-4">
-              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+              {/* Icon removed for cleaner look */}
             </div>
             <h3 className="text-xl font-semibold text-red-400 mb-2">Error Loading Blog</h3>
             <p className="text-gray-300 mb-6">Unable to load blog data. Please try again.</p>
@@ -109,7 +107,7 @@ const EditBlog = () => {
               to="/blogs"
               className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300"
             >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              {/* Icon removed for cleaner look */}
               Back to Blogs
             </Link>
           </div>
@@ -138,11 +136,11 @@ const EditBlog = () => {
               to="/blogs"
               className="inline-flex items-center text-gray-400 hover:text-white transition-colors duration-200"
             >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              {/* Icon removed for cleaner look */}
               Back to Blogs
             </Link>
             <div className="flex items-center space-x-3">
-              <PencilSquareIcon className="h-5 w-5 text-indigo-400" />
+              {/* Icon removed for cleaner look */}
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                   Edit Blog
@@ -231,7 +229,7 @@ const EditBlog = () => {
             >
               <label className="block text-sm font-semibold text-gray-200 mb-3">
                 <div className="flex items-center">
-                  <PhotoIcon className="h-5 w-5 mr-2 text-indigo-400" />
+                  {/* Icon removed for cleaner look */}
                   Current Images
                 </div>
               </label>
@@ -263,7 +261,7 @@ const EditBlog = () => {
           >
             <label htmlFor="images" className="block text-sm font-semibold text-gray-200 mb-3">
               <div className="flex items-center">
-                <PhotoIcon className="h-5 w-5 mr-2 text-indigo-400" />
+                {/* Icon removed for cleaner look */}
                 Upload New Images (Optional)
               </div>
             </label>
@@ -295,22 +293,7 @@ const EditBlog = () => {
             >
               Cancel
             </Link>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              type="submit"
-              disabled={mutation.isLoading}
-              className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-            >
-              {mutation.isLoading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                  Updating Blog...
-                </div>
-              ) : (
-                'Update Blog'
-              )}
-            </motion.button>
+            {/* Submit button removed for cleaner look */}
           </motion.div>
         </motion.form>
 

@@ -17,7 +17,21 @@ const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      let errorMsg = 'Login failed';
+      if (error.response) {
+        if (error.response.data?.message) {
+          errorMsg = error.response.data.message;
+        } else if (typeof error.response.data === 'string') {
+          errorMsg = error.response.data;
+        } else if (error.response.data?.error) {
+          errorMsg = error.response.data.error;
+        } else {
+          errorMsg = JSON.stringify(error.response.data);
+        }
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      toast.error(errorMsg);
       setIsLoading(false);
     }
   };

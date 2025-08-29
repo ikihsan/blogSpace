@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { PencilIcon, TrashIcon, MagnifyingGlassIcon, FunnelIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 
 const fetchAdminBlogs = async (page, status, search) => {
@@ -70,7 +70,7 @@ const ManageBlogs = () => {
                 to="/blogs/new"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                <PlusIcon className="h-5 w-5 mr-2" />
+                {/* Removed PlusIcon for cleaner look */}
                 Create New Blog
               </Link>
             </motion.div>
@@ -86,7 +86,7 @@ const ManageBlogs = () => {
         >
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              {/* Removed MagnifyingGlassIcon for cleaner look */}
               <input
                 type="text"
                 placeholder="Search blogs by title..."
@@ -96,7 +96,7 @@ const ManageBlogs = () => {
               />
             </div>
             <div className="relative">
-              <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              {/* Removed FunnelIcon for cleaner look */}
               <select
                 value={status}
                 onChange={(e) => { setStatus(e.target.value); setPage(1); }}
@@ -128,9 +128,7 @@ const ManageBlogs = () => {
             className="bg-red-900/20 border border-red-700/50 rounded-2xl p-8 text-center shadow-xl"
           >
             <div className="text-red-400 mb-4">
-              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+              {/* Icon removed for cleaner look */}
             </div>
             <h3 className="text-xl font-semibold text-red-400 mb-2">Error Loading Blogs</h3>
             <p className="text-gray-300">Please try refreshing the page or contact support if the problem persists.</p>
@@ -203,7 +201,7 @@ const ManageBlogs = () => {
                               className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition-all duration-200 border border-indigo-500/20 hover:border-indigo-400/40"
                               title="Edit Blog"
                             >
-                              <PencilIcon className="h-4 w-4 mr-2" />
+                              <PencilIcon className="h-4 w-4 mr-1" />
                               Edit
                             </Link>
                           </motion.div>
@@ -213,7 +211,7 @@ const ManageBlogs = () => {
                               className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all duration-200 border border-red-500/20 hover:border-red-400/40"
                               title="Delete Blog"
                             >
-                              <TrashIcon className="h-4 w-4 mr-2" />
+                              <TrashIcon className="h-4 w-4 mr-1" />
                               Delete
                             </button>
                           </motion.div>
@@ -276,9 +274,7 @@ const ManageBlogs = () => {
             className="text-center py-16 bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 shadow-xl"
           >
             <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              {/* Icon removed for cleaner look */}
             </div>
             <h3 className="text-xl font-semibold text-gray-300 mb-2">No Blogs Found</h3>
             <p className="text-gray-500 mb-6">Get started by creating your first blog post</p>
@@ -286,7 +282,7 @@ const ManageBlogs = () => {
               to="/blogs/new"
               className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-              <PlusIcon className="h-5 w-5 mr-2" />
+              {/* Removed PlusIcon for cleaner look */}
               Create Your First Blog
             </Link>
           </motion.div>
