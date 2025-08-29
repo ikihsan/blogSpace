@@ -67,7 +67,6 @@ const Dashboard = () => {
   className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in"
   style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
   <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
-      >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
@@ -160,7 +159,6 @@ const Dashboard = () => {
   className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in"
   style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
   <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
-      >
         <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
           <span>📊</span>
           Blog Statistics
@@ -198,7 +196,6 @@ const Dashboard = () => {
   className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in"
   style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
   <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
-      >
         <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
           <span>🕒</span>
           Recent Blogs

@@ -84,7 +84,6 @@ const ManageBlogs = () => {
           className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in mb-12"
           style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
           <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
-        >
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
               {/* Removed MagnifyingGlassIcon for cleaner look */}
@@ -142,7 +141,6 @@ const ManageBlogs = () => {
             className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden border border-white/20 relative animate-fade-in"
             style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
             <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
-          >
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gradient-to-r from-gray-800/80 to-gray-700/80">
