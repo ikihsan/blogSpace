@@ -32,19 +32,28 @@ const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     const allowedOrigins = [
       'http://localhost:3000',
-      'http://localhost:3001', 
+      'http://localhost:3001',
       process.env.FRONTEND_URL,
-      process.env.ADMIN_URL,
-      'https://checkk-czzg.onrender.com'
+      process.env.ADMIN_URL
     ].filter(Boolean);
-    
+
+    // Add CORS_ORIGIN if set (comma-separated list)
+    if (process.env.CORS_ORIGIN) {
+      const corsOrigins = process.env.CORS_ORIGIN.split(',').map(url => url.trim());
+      allowedOrigins.push(...corsOrigins);
+    }
+
+    console.log('Allowed origins:', allowedOrigins);
+    console.log('Request origin:', origin);
+
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all origins in production for now
+      console.log('Origin not allowed:', origin);
+      callback(new Error('Not allowed by CORS'));
     }
   },
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
