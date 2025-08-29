@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
 
-# Build output
-build/
+# Build output (commented for deployment)
+# build/
 
 # Environment variables
 .env
