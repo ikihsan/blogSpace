@@ -90,8 +90,26 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Debug endpoint to check admin user (remove in production)
-app.get('/api/debug/admin', async (req, res) => {
+// Debug endpoint to check JWT_SECRET
+app.get('/api/debug/jwt-test', (req, res) => {
+  try {
+    const jwt = require('jsonwebtoken');
+    const testToken = jwt.sign({ test: 'data' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    res.json({ 
+      jwt_secret_exists: !!process.env.JWT_SECRET,
+      jwt_secret_length: process.env.JWT_SECRET ? process.env.JWT_SECRET.length : 0,
+      jwt_generation_success: true,
+      test_token: testToken.substring(0, 50) + '...'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      jwt_secret_exists: !!process.env.JWT_SECRET,
+      jwt_secret_length: process.env.JWT_SECRET ? process.env.JWT_SECRET.length : 0,
+      jwt_generation_success: false,
+      error: error.message
+    });
+  }
+});
   try {
     const adminEmail = process.env.ADMIN_EMAIL;
     if (!adminEmail) {
