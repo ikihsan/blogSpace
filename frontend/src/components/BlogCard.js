@@ -3,8 +3,20 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const BlogCard = ({ blog }) => {
-  const imageUrl = blog.images && blog.images.length > 0 
-    ? `${process.env.REACT_APP_API_URL.replace('/api', '')}${blog.images[0].imageUrl}`
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return 'https://via.placeholder.com/400x250';
+
+    // If it's already a full URL (Cloudinary), return as is
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+
+    // If it's a local path, prepend the API URL
+    return `${process.env.REACT_APP_API_URL.replace('/api', '')}${imageUrl}`;
+  };
+
+  const imageUrl = blog.images && blog.images.length > 0
+    ? getImageUrl(blog.images[0].imageUrl)
     : 'https://via.placeholder.com/400x250';
 
   return (

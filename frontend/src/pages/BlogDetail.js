@@ -3,6 +3,7 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import CommentSection from '../components/CommentSection';
 
 const fetchBlogBySlug = async (slug) => {
   const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/${slug}`);
@@ -17,6 +18,18 @@ const BlogDetail = () => {
   if (isError) return <div className="text-center py-12 text-red-500">Error loading post.</div>;
 
   const API_BASE_URL = process.env.REACT_APP_API_URL.replace('/api', '');
+
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return 'https://via.placeholder.com/400x250';
+
+    // If it's already a full URL (Cloudinary), return as is
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+
+    // If it's a local path, prepend the API URL
+    return `${API_BASE_URL}${imageUrl}`;
+  };
 
   return (
     <>
@@ -37,10 +50,10 @@ const BlogDetail = () => {
         {blog.images && blog.images.length > 0 && (
           <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {blog.images.map(image => (
-              <img 
-                key={image.id} 
-                src={`${API_BASE_URL}${image.imageUrl}`} 
-                alt={blog.title} 
+              <img
+                key={image.id}
+                src={getImageUrl(image.imageUrl)}
+                alt={blog.title}
                 className="rounded-lg object-cover w-full h-64"
               />
             ))}
@@ -49,6 +62,9 @@ const BlogDetail = () => {
 
         <div className="prose prose-invert max-w-none text-gray-300" dangerouslySetInnerHTML={{ __html: blog.content }}>
         </div>
+
+        {/* Comments Section */}
+        <CommentSection blogId={blog.id} />
       </div>
     </>
   );
