@@ -62,6 +62,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Serve test files in development/debugging
+app.use('/test', express.static(path.join(__dirname, 'public')));
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/blogs', require('./routes/blogs'));
@@ -110,6 +113,43 @@ app.get('/api/debug/admin', async (req, res) => {
   }
 });
 
+// Debug endpoint to test login functionality
+app.post('/api/debug/test-login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    
+    console.log('Debug login attempt:', { email, receivedPassword: !!password });
+    console.log('Expected admin:', { adminEmail, hasAdminPassword: !!adminPassword });
+    
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.json({ 
+        success: false, 
+        message: 'User not found',
+        debug: { email, adminEmail, userExists: false }
+      });
+    }
+    
+    const isMatch = await user.comparePassword(password);
+    console.log('Password comparison result:', isMatch);
+    
+    res.json({
+      success: isMatch,
+      user: { id: user.id, email: user.email, role: user.role },
+      debug: {
+        passwordMatch: isMatch,
+        userRole: user.role,
+        isAdmin: user.role === 'admin'
+      }
+    });
+  } catch (error) {
+    console.error('Debug login error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -123,39 +163,71 @@ app.use('/api/*', (req, res) => {
 
 // Serve static files for frontend and admin builds
 if (process.env.NODE_ENV === 'production') {
-  const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
-  const adminPath = path.join(__dirname, '..', 'admin', 'build');
+  // Try multiple possible paths for the builds
+  const possiblePaths = {
+    frontend: [
+      path.join(__dirname, '..', 'frontend', 'build'),
+      path.join(__dirname, '..', '..', 'frontend', 'build'),
+      path.join(__dirname, 'frontend', 'build'),
+      path.join(process.cwd(), 'frontend', 'build')
+    ],
+    admin: [
+      path.join(__dirname, '..', 'admin', 'build'),
+      path.join(__dirname, '..', '..', 'admin', 'build'),
+      path.join(__dirname, 'admin', 'build'),
+      path.join(process.cwd(), 'admin', 'build')
+    ]
+  };
   
-  console.log('Frontend build path:', frontendPath);
-  console.log('Admin build path:', adminPath);
+  console.log('Current working directory:', process.cwd());
+  console.log('__dirname:', __dirname);
   
-  // Check if build directories exist
   const fs = require('fs');
-  const frontendExists = fs.existsSync(frontendPath);
-  const adminExists = fs.existsSync(adminPath);
+  let frontendPath = null;
+  let adminPath = null;
   
-  console.log('Frontend build exists:', frontendExists);
-  console.log('Admin build exists:', adminExists);
+  // Find the correct frontend path
+  for (const fPath of possiblePaths.frontend) {
+    console.log('Checking frontend path:', fPath);
+    if (fs.existsSync(fPath)) {
+      frontendPath = fPath;
+      console.log('Found frontend build at:', fPath);
+      break;
+    }
+  }
   
-  if (frontendExists) {
+  // Find the correct admin path
+  for (const aPath of possiblePaths.admin) {
+    console.log('Checking admin path:', aPath);
+    if (fs.existsSync(aPath)) {
+      adminPath = aPath;
+      console.log('Found admin build at:', aPath);
+      break;
+    }
+  }
+  
+  if (!frontendPath) {
+    console.log('WARNING: Frontend build directory not found. Tried paths:', possiblePaths.frontend);
+  }
+  if (!adminPath) {
+    console.log('WARNING: Admin build directory not found. Tried paths:', possiblePaths.admin);
+  }
+  
+  if (frontendPath) {
     // Serve frontend build
     app.use(express.static(frontendPath));
     console.log('Serving frontend from:', frontendPath);
-  } else {
-    console.log('WARNING: Frontend build directory not found at:', frontendPath);
   }
   
-  if (adminExists) {
+  if (adminPath) {
     // Serve admin build at /admin route
     app.use('/admin', express.static(adminPath));
     console.log('Serving admin from:', adminPath);
-  } else {
-    console.log('WARNING: Admin build directory not found at:', adminPath);
   }
   
   // Admin panel route
   app.get('/admin/*', (req, res) => {
-    if (adminExists) {
+    if (adminPath) {
       res.sendFile(path.resolve(adminPath, 'index.html'));
     } else {
       res.status(404).json({ error: 'Admin panel not available - build not found' });
@@ -164,17 +236,19 @@ if (process.env.NODE_ENV === 'production') {
   
   // Frontend routes (catch-all)
   app.get('*', (req, res) => {
-    if (frontendExists) {
+    if (frontendPath) {
       res.sendFile(path.resolve(frontendPath, 'index.html'));
     } else {
       res.status(404).json({ 
         error: 'Frontend not available - build not found',
         message: 'Please ensure the frontend is built properly',
-        paths_checked: {
-          frontend: frontendPath,
-          admin: adminPath
-        },
-        current_directory: __dirname
+        debug_info: {
+          cwd: process.cwd(),
+          dirname: __dirname,
+          tried_paths: possiblePaths,
+          frontend_found: !!frontendPath,
+          admin_found: !!adminPath
+        }
       });
     }
   });
