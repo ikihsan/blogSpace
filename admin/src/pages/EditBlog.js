@@ -120,7 +120,7 @@ const EditBlog = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-0"
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#1c1c1c] text-white p-0"
     >
       <div className="max-w-3xl mx-auto py-10 px-4">
         {/* Header */}
@@ -128,7 +128,7 @@ const EditBlog = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-10"
+          className="mb-12"
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <Link
@@ -152,8 +152,10 @@ const EditBlog = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           onSubmit={handleSubmit}
-          className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 border border-gray-800 shadow-2xl space-y-10"
-        >
+          className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in space-y-12"
+          style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+          <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
+  {/* gradient overlay above, continue with form fields below */}
           {/* Title Field */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -221,16 +223,17 @@ const EditBlog = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.6 }}
-              className="mb-8"
-            >
-              <label className="block text-base font-bold text-indigo-300 mb-2">Current Images</label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-950 rounded-xl border border-indigo-700/30">
+              className="mb-12 bg-white/10 backdrop-blur-2xl rounded-3xl p-8 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in"
+              style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+              <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
+              <label className="block text-base font-bold text-indigo-300 mb-2 z-10 relative">Current Images</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl border border-indigo-700/30 z-10 relative">
                 {blog.images.map(img => (
                   <div key={img.id} className="relative group">
                     <img
                       src={`${process.env.REACT_APP_API_URL.replace('/api', '')}${img.imageUrl}`}
                       alt="blog"
-                      className="h-28 w-full object-cover rounded-lg border border-indigo-700/30 group-hover:border-indigo-400/50 transition-colors duration-200 shadow-md"
+                      className="h-28 w-full object-cover rounded-lg border border-indigo-700/30 group-hover:border-indigo-400/50 transition-colors duration-200 shadow-md animate-fade-in"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
                       <span className="text-white text-xs font-semibold">Current Image</span>
@@ -238,7 +241,7 @@ const EditBlog = () => {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-400 mt-2">These images will be replaced if you upload new ones below.</p>
+              <p className="text-xs text-gray-400 mt-2 z-10 relative">These images will be replaced if you upload new ones below.</p>
             </motion.div>
           ) : (
             <motion.div

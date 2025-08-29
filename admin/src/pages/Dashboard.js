@@ -58,13 +58,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-8">
+  <div className="space-y-12">
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-xl p-8 border border-gray-700"
+  className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in"
+  style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+  <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
       >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
@@ -99,16 +101,16 @@ const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10"
       >
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-indigo-500/50 transition-colors duration-200">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between animate-slide-in">
             <div>
               <p className="text-gray-400 text-sm font-medium">Total Blogs</p>
               <p className="text-2xl font-bold text-white mt-1">{stats.totalBlogs}</p>
             </div>
             <div className="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">📝</span>
+              <span className="text-2xl animate-bounce">📝</span>
             </div>
           </div>
         </div>
@@ -120,7 +122,7 @@ const Dashboard = () => {
               <p className="text-2xl font-bold text-green-400 mt-1">{stats.publishedBlogs}</p>
             </div>
             <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">✅</span>
+              <span className="text-2xl animate-bounce">✅</span>
             </div>
           </div>
         </div>
@@ -132,7 +134,7 @@ const Dashboard = () => {
               <p className="text-2xl font-bold text-yellow-400 mt-1">{stats.draftBlogs}</p>
             </div>
             <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">📝</span>
+              <span className="text-2xl animate-bounce">📝</span>
             </div>
           </div>
         </div>
@@ -144,7 +146,7 @@ const Dashboard = () => {
               <p className="text-2xl font-bold text-pink-400 mt-1">{stats.totalViews || 0}</p>
             </div>
             <div className="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">👁️</span>
+              <span className="text-2xl animate-bounce">👁️</span>
             </div>
           </div>
         </div>
@@ -155,7 +157,9 @@ const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
+  className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in"
+  style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+  <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
       >
         <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
           <span>📊</span>
@@ -191,7 +195,9 @@ const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
-        className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
+  className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in"
+  style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+  <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
       >
         <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
           <span>🕒</span>

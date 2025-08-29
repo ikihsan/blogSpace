@@ -37,35 +37,36 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 p-0">
-      <div className="max-w-md w-full bg-gray-900/90 backdrop-blur-md p-10 rounded-2xl shadow-2xl border border-gray-800">
-        <h2 className="text-4xl font-extrabold text-center bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-8">Admin Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#1c1c1c] p-0">
+      <div className="max-w-md w-full bg-white/10 backdrop-blur-2xl p-12 rounded-3xl shadow-2xl border border-white/20 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
+        <h2 className="text-5xl font-extrabold text-center bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#ec4899] bg-clip-text text-transparent mb-10 drop-shadow-lg z-10 relative animate-pulse">Admin Login</h2>
+        <form onSubmit={handleSubmit} className="space-y-8 z-10 relative">
           <div>
-            <label className="block text-base font-bold text-indigo-300 mb-2" htmlFor="email">Email</label>
+            <label className="block text-lg font-bold text-indigo-300 mb-2" htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-950 border border-indigo-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-lg"
+              className="w-full px-4 py-3 bg-white/20 border border-indigo-700 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-lg shadow"
               required
             />
           </div>
           <div>
-            <label className="block text-base font-bold text-indigo-300 mb-2" htmlFor="password">Password</label>
+            <label className="block text-lg font-bold text-indigo-300 mb-2" htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-950 border border-indigo-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-lg"
+              className="w-full px-4 py-3 bg-white/20 border border-indigo-700 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-lg shadow"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow disabled:opacity-50 text-lg"
+            className="w-full bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white font-bold py-3 px-4 rounded-2xl transition-all shadow-xl disabled:opacity-50 text-lg hover:scale-105 hover:from-[#8b5cf6] hover:to-[#6366f1]"
             disabled={isLoading}
           >
             {isLoading ? 'Logging in...' : 'Login'}

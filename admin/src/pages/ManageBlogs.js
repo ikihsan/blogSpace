@@ -44,7 +44,7 @@ const ManageBlogs = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-0"
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#1c1c1c] text-white p-0"
     >
       <div className="max-w-5xl mx-auto py-10 px-4">
         {/* Header Section */}
@@ -52,7 +52,7 @@ const ManageBlogs = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-10"
+          className="mb-12"
         >
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div>
@@ -81,7 +81,9 @@ const ManageBlogs = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 border border-gray-800 shadow-2xl mb-10"
+          className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in mb-12"
+          style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+          <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
         >
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
@@ -137,7 +139,9 @@ const ManageBlogs = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-gray-800"
+            className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden border border-white/20 relative animate-fade-in"
+            style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+            <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
           >
             <div className="overflow-x-auto">
               <table className="w-full">

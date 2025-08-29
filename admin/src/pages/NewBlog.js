@@ -58,7 +58,7 @@ const NewBlog = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-0"
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#1c1c1c] text-white p-0"
     >
       <div className="max-w-3xl mx-auto py-10 px-4">
         {/* Header */}
@@ -66,7 +66,7 @@ const NewBlog = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-    className="mb-10"
+          className="mb-12"
         >
           <div className="flex items-center justify-between mb-6">
             <Link
@@ -90,8 +90,10 @@ const NewBlog = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           onSubmit={handleSubmit}
-    className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 border border-gray-800 shadow-2xl space-y-10"
-        >
+  className="bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl relative overflow-hidden animate-fade-in space-y-12"
+  style={{boxShadow:'0 8px 32px 0 rgba(31, 38, 135, 0.37)'}}>
+  <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
+  {/* gradient overlay above, continue with form fields below */}
           {/* Title Field */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
