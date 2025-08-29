@@ -120,32 +120,28 @@ const EditBlog = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6"
+      className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-0"
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-3xl mx-auto py-10 px-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-8"
+          className="mb-10"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <Link
               to="/blogs"
-              className="inline-flex items-center text-gray-400 hover:text-white transition-colors duration-200"
+              className="text-gray-400 hover:text-indigo-400 font-medium text-sm transition-colors duration-200 mb-2 md:mb-0"
             >
-              {/* Icon removed for cleaner look */}
-              Back to Blogs
+              ← Back to Blogs
             </Link>
-            <div className="flex items-center space-x-3">
-              {/* Icon removed for cleaner look */}
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                  Edit Blog
-                </h1>
-                <p className="text-gray-400 text-sm">Update your blog post details</p>
-              </div>
+            <div>
+              <h1 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-1">
+                Edit Blog
+              </h1>
+              <p className="text-gray-400 text-base">Update your blog post details</p>
             </div>
           </div>
         </motion.div>
@@ -156,7 +152,7 @@ const EditBlog = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           onSubmit={handleSubmit}
-          className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 shadow-xl space-y-8"
+          className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 border border-gray-800 shadow-2xl space-y-10"
         >
           {/* Title Field */}
           <motion.div
@@ -164,7 +160,7 @@ const EditBlog = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
-            <label htmlFor="title" className="block text-sm font-semibold text-gray-200 mb-3">
+            <label htmlFor="title" className="block text-base font-bold text-indigo-300 mb-2">
               Blog Title
             </label>
             <input
@@ -172,7 +168,7 @@ const EditBlog = () => {
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+              className="w-full bg-gray-950 border border-indigo-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-lg"
               placeholder="Enter an engaging title for your blog..."
               required
             />
@@ -184,15 +180,15 @@ const EditBlog = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.4 }}
           >
-            <label htmlFor="content" className="block text-sm font-semibold text-gray-200 mb-3">
+            <label htmlFor="content" className="block text-base font-bold text-indigo-300 mb-2">
               Content
             </label>
             <textarea
               id="content"
-              rows="12"
+              rows="10"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 resize-vertical"
+              className="w-full bg-gray-950 border border-indigo-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-base resize-vertical"
               placeholder="Write your blog content here..."
               required
             />
@@ -204,18 +200,18 @@ const EditBlog = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
           >
-            <label htmlFor="status" className="block text-sm font-semibold text-gray-200 mb-3">
+            <label htmlFor="status" className="block text-base font-bold text-indigo-300 mb-2">
               Publication Status
             </label>
             <select
               id="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+              className="w-full bg-gray-950 border border-indigo-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-base"
             >
-              <option value="draft" className="bg-gray-800">Draft - Save as draft</option>
-              <option value="published" className="bg-gray-800">Published - Make it live</option>
-              <option value="archived" className="bg-gray-800">Archived - Hide from public</option>
+              <option value="draft" className="bg-gray-900">Draft - Save as draft</option>
+              <option value="published" className="bg-gray-900">Published - Make it live</option>
+              <option value="archived" className="bg-gray-900">Archived - Hide from public</option>
             </select>
           </motion.div>
 
@@ -225,45 +221,36 @@ const EditBlog = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.6 }}
+              className="mb-8"
             >
-              <label className="block text-sm font-semibold text-gray-200 mb-3">
-                <div className="flex items-center">
-                  Current Images
-                </div>
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-900/30 rounded-xl border border-gray-600/50">
+              <label className="block text-base font-bold text-indigo-300 mb-2">Current Images</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-950 rounded-xl border border-indigo-700/30">
                 {blog.images.map(img => (
                   <div key={img.id} className="relative group">
                     <img
                       src={`${process.env.REACT_APP_API_URL.replace('/api', '')}${img.imageUrl}`}
                       alt="blog"
-                      className="h-24 w-full object-cover rounded-lg border border-gray-600/50 group-hover:border-indigo-400/50 transition-colors duration-200"
+                      className="h-28 w-full object-cover rounded-lg border border-indigo-700/30 group-hover:border-indigo-400/50 transition-colors duration-200 shadow-md"
                     />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
-                      <span className="text-white text-xs font-medium">Current Image</span>
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                      <span className="text-white text-xs font-semibold">Current Image</span>
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                These images will be replaced if you upload new ones below.
-              </p>
+              <p className="text-xs text-gray-400 mt-2">These images will be replaced if you upload new ones below.</p>
             </motion.div>
           ) : (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.6 }}
-              className="mb-4"
+              className="mb-8"
             >
-              <label className="block text-sm font-semibold text-gray-200 mb-3">
-                <div className="flex items-center">
-                  No images uploaded for this blog.
-                </div>
-              </label>
+              <label className="block text-base font-bold text-indigo-300 mb-2">No images uploaded for this blog.</label>
               <button
                 type="button"
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition-colors duration-200 shadow"
                 onClick={() => document.getElementById('images')?.focus()}
               >
                 Upload Images
@@ -277,12 +264,7 @@ const EditBlog = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.7 }}
           >
-            <label htmlFor="images" className="block text-sm font-semibold text-gray-200 mb-3">
-              <div className="flex items-center">
-                {/* Icon removed for cleaner look */}
-                Upload New Images (Optional)
-              </div>
-            </label>
+            <label htmlFor="images" className="block text-base font-bold text-indigo-300 mb-2">Upload New Images (Optional)</label>
             <div className="relative">
               <input
                 type="file"
@@ -290,11 +272,9 @@ const EditBlog = () => {
                 multiple
                 accept="image/*"
                 onChange={handleImageChange}
-                className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 file:transition-colors file:cursor-pointer"
+                className="w-full bg-gray-950 border border-indigo-700 rounded-lg px-4 py-3 text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-base file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 file:transition-colors file:cursor-pointer shadow"
               />
-              <p className="text-xs text-gray-500 mt-2">
-                Supported formats: JPG, PNG, GIF. Maximum file size: 5MB each. Max 3 images.
-              </p>
+              <p className="text-xs text-gray-400 mt-2">Supported formats: JPG, PNG, GIF. Maximum file size: 5MB each. Max 3 images.</p>
             </div>
           </motion.div>
 
@@ -307,7 +287,7 @@ const EditBlog = () => {
           >
             <Link
               to="/blogs"
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-all duration-200"
+              className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-all duration-200 shadow"
             >
               Cancel
             </Link>
@@ -320,10 +300,10 @@ const EditBlog = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.9 }}
-          className="mt-8 bg-indigo-900/20 border border-indigo-700/30 rounded-xl p-6"
+          className="mt-10 bg-gradient-to-r from-indigo-900/30 to-purple-900/30 border border-indigo-700/30 rounded-xl p-6 shadow"
         >
-          <h3 className="text-lg font-semibold text-indigo-300 mb-3">Editing Tips</h3>
-          <ul className="text-sm text-gray-300 space-y-2">
+          <h3 className="text-xl font-bold text-indigo-300 mb-4">Editing Tips</h3>
+          <ul className="text-base text-gray-300 space-y-2">
             <li>• Make sure your title is clear and engaging</li>
             <li>• Review your content for spelling and grammar</li>
             <li>• Upload new images only if you want to replace existing ones</li>

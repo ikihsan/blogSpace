@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 
 const fetchAdminBlogs = async (page, status, search) => {
@@ -45,15 +44,15 @@ const ManageBlogs = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6"
+      className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-0"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto py-10 px-4">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-8"
+          className="mb-10"
         >
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div>
@@ -82,7 +81,7 @@ const ManageBlogs = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 shadow-xl mb-8"
+          className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 border border-gray-800 shadow-2xl mb-10"
         >
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
@@ -138,7 +137,7 @@ const ManageBlogs = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-gray-700/50"
+            className="bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-gray-800"
           >
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -201,7 +200,7 @@ const ManageBlogs = () => {
                               className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition-all duration-200 border border-indigo-500/20 hover:border-indigo-400/40"
                               title="Edit Blog"
                             >
-                              <PencilIcon className="h-4 w-4 mr-1" />
+                              {/* Edit action icon removed for cleaner look */}
                               Edit
                             </Link>
                           </motion.div>
@@ -211,7 +210,7 @@ const ManageBlogs = () => {
                               className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all duration-200 border border-red-500/20 hover:border-red-400/40"
                               title="Delete Blog"
                             >
-                              <TrashIcon className="h-4 w-4 mr-1" />
+                              {/* Delete action icon removed for cleaner look */}
                               Delete
                             </button>
                           </motion.div>

@@ -58,32 +58,28 @@ const NewBlog = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6"
+      className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-0"
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-3xl mx-auto py-10 px-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-8"
+    className="mb-10"
         >
           <div className="flex items-center justify-between mb-6">
             <Link
               to="/blogs"
-              className="inline-flex items-center text-gray-400 hover:text-white transition-colors duration-200"
+              className="text-gray-400 hover:text-white transition-colors duration-200"
             >
-              {/* Icon removed for cleaner look */}
               Back to Blogs
             </Link>
-            <div className="flex items-center space-x-3">
-              {/* Icon removed for cleaner look */}
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                  Create New Blog
-                </h1>
-                <p className="text-gray-400 text-sm">Share your thoughts with the world</p>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Create New Blog
+              </h1>
+              <p className="text-gray-400 text-sm">Share your thoughts with the world</p>
             </div>
           </div>
         </motion.div>
@@ -94,7 +90,7 @@ const NewBlog = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           onSubmit={handleSubmit}
-          className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 shadow-xl space-y-8"
+    className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 border border-gray-800 shadow-2xl space-y-10"
         >
           {/* Title Field */}
           <motion.div
@@ -163,10 +159,7 @@ const NewBlog = () => {
             transition={{ duration: 0.4, delay: 0.6 }}
           >
             <label htmlFor="images" className="block text-sm font-semibold text-gray-200 mb-3">
-              <div className="flex items-center">
-                {/* Icon removed for cleaner look */}
-                Images (Optional - Max 3)
-              </div>
+              Images (Optional - Max 3)
             </label>
             <div className="relative">
               <input

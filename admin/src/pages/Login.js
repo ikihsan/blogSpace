@@ -37,35 +37,35 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-white mb-6">Admin Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2" htmlFor="email">Email</label>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 p-0">
+      <div className="max-w-md w-full bg-gray-900/90 backdrop-blur-md p-10 rounded-2xl shadow-2xl border border-gray-800">
+        <h2 className="text-4xl font-extrabold text-center bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-8">Admin Login</h2>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div>
+            <label className="block text-base font-bold text-indigo-300 mb-2" htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-3 bg-gray-950 border border-indigo-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-lg"
               required
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-300 mb-2" htmlFor="password">Password</label>
+          <div>
+            <label className="block text-base font-bold text-indigo-300 mb-2" htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-3 bg-gray-950 border border-indigo-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-lg"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow disabled:opacity-50 text-lg"
             disabled={isLoading}
           >
             {isLoading ? 'Logging in...' : 'Login'}
