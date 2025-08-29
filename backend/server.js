@@ -123,20 +123,60 @@ app.use('/api/*', (req, res) => {
 
 // Serve static files for frontend and admin builds
 if (process.env.NODE_ENV === 'production') {
-  // Serve frontend build
-  app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')));
+  const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
+  const adminPath = path.join(__dirname, '..', 'admin', 'build');
   
-  // Serve admin build at /admin route
-  app.use('/admin', express.static(path.join(__dirname, '..', 'admin', 'build')));
+  console.log('Frontend build path:', frontendPath);
+  console.log('Admin build path:', adminPath);
+  
+  // Check if build directories exist
+  const fs = require('fs');
+  const frontendExists = fs.existsSync(frontendPath);
+  const adminExists = fs.existsSync(adminPath);
+  
+  console.log('Frontend build exists:', frontendExists);
+  console.log('Admin build exists:', adminExists);
+  
+  if (frontendExists) {
+    // Serve frontend build
+    app.use(express.static(frontendPath));
+    console.log('Serving frontend from:', frontendPath);
+  } else {
+    console.log('WARNING: Frontend build directory not found at:', frontendPath);
+  }
+  
+  if (adminExists) {
+    // Serve admin build at /admin route
+    app.use('/admin', express.static(adminPath));
+    console.log('Serving admin from:', adminPath);
+  } else {
+    console.log('WARNING: Admin build directory not found at:', adminPath);
+  }
   
   // Admin panel route
   app.get('/admin/*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'admin', 'build', 'index.html'));
+    if (adminExists) {
+      res.sendFile(path.resolve(adminPath, 'index.html'));
+    } else {
+      res.status(404).json({ error: 'Admin panel not available - build not found' });
+    }
   });
   
   // Frontend routes (catch-all)
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'frontend', 'build', 'index.html'));
+    if (frontendExists) {
+      res.sendFile(path.resolve(frontendPath, 'index.html'));
+    } else {
+      res.status(404).json({ 
+        error: 'Frontend not available - build not found',
+        message: 'Please ensure the frontend is built properly',
+        paths_checked: {
+          frontend: frontendPath,
+          admin: adminPath
+        },
+        current_directory: __dirname
+      });
+    }
   });
 } else {
   // Development mode - just return a message

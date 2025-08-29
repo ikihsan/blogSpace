@@ -9,11 +9,12 @@
     "install-admin": "cd admin && npm install",
     "build-frontend": "cd frontend && npm run build",
     "build-admin": "cd admin && npm run build",
-    "build": "npm run install-backend && npm run install-frontend && npm run install-admin && npm run build-frontend && npm run build-admin",
+    "build": "echo 'Starting build process...' && npm run install-backend && echo 'Backend installed' && npm run install-frontend && echo 'Frontend installed' && npm run install-admin && echo 'Admin installed' && npm run build-frontend && echo 'Frontend built' && npm run build-admin && echo 'Admin built' && echo 'Build complete!'",
     "start": "cd backend && npm start",
     "dev-backend": "cd backend && npm run dev",
     "dev-frontend": "cd frontend && npm start",
-    "dev-admin": "cd admin && npm start"
+    "dev-admin": "cd admin && npm start",
+    "postbuild": "echo 'Build verification:' && node -e \"console.log('Frontend build exists:', require('fs').existsSync('./frontend/build')); console.log('Admin build exists:', require('fs').existsSync('./admin/build'));\""
   },
   "engines": {
     "node": ">=18.0.0"
