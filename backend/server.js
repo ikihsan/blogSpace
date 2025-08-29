@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const jwt = require('jsonwebtoken');
 const path = require('path');
 require('dotenv').config();
 
