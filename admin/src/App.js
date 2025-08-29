@@ -19,7 +19,7 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <Router>
+        <Router basename="/admin">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route

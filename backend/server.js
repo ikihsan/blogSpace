@@ -150,6 +150,38 @@ app.post('/api/debug/test-login', async (req, res) => {
   }
 });
 
+// Debug endpoint for deployment structure
+app.get('/api/debug/deployment', (req, res) => {
+  const fs = require('fs');
+  
+  const checkPath = (path) => {
+    try {
+      const exists = fs.existsSync(path);
+      const contents = exists ? fs.readdirSync(path) : null;
+      return { exists, contents };
+    } catch (error) {
+      return { exists: false, error: error.message };
+    }
+  };
+
+  const info = {
+    cwd: process.cwd(),
+    dirname: __dirname,
+    env: process.env.NODE_ENV,
+    paths: {
+      currentDir: checkPath('.'),
+      frontendBuild: checkPath('./frontend/build'),
+      adminBuild: checkPath('./admin/build'),
+      backendRelativeFrontend: checkPath(path.join(__dirname, '..', 'frontend', 'build')),
+      backendRelativeAdmin: checkPath(path.join(__dirname, '..', 'admin', 'build')),
+      cwdFrontend: checkPath(path.join(process.cwd(), 'frontend', 'build')),
+      cwdAdmin: checkPath(path.join(process.cwd(), 'admin', 'build'))
+    }
+  };
+  
+  res.json(info);
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -166,16 +198,16 @@ if (process.env.NODE_ENV === 'production') {
   // Try multiple possible paths for the builds
   const possiblePaths = {
     frontend: [
+      path.join(process.cwd(), 'frontend', 'build'),
       path.join(__dirname, '..', 'frontend', 'build'),
       path.join(__dirname, '..', '..', 'frontend', 'build'),
-      path.join(__dirname, 'frontend', 'build'),
-      path.join(process.cwd(), 'frontend', 'build')
+      path.join(__dirname, 'frontend', 'build')
     ],
     admin: [
+      path.join(process.cwd(), 'admin', 'build'),
       path.join(__dirname, '..', 'admin', 'build'),
       path.join(__dirname, '..', '..', 'admin', 'build'),
-      path.join(__dirname, 'admin', 'build'),
-      path.join(process.cwd(), 'admin', 'build')
+      path.join(__dirname, 'admin', 'build')
     ]
   };
   
@@ -225,8 +257,8 @@ if (process.env.NODE_ENV === 'production') {
     console.log('Serving admin from:', adminPath);
   }
   
-  // Admin panel route
-  app.get('/admin/*', (req, res) => {
+  // Admin panel route - handle all /admin/* routes
+  app.get('/admin*', (req, res) => {
     if (adminPath) {
       res.sendFile(path.resolve(adminPath, 'index.html'));
     } else {
@@ -234,7 +266,7 @@ if (process.env.NODE_ENV === 'production') {
     }
   });
   
-  // Frontend routes (catch-all)
+  // Frontend routes (catch-all for everything else)
   app.get('*', (req, res) => {
     if (frontendPath) {
       res.sendFile(path.resolve(frontendPath, 'index.html'));
