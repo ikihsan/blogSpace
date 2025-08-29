@@ -110,20 +110,23 @@ app.get('/api/debug/jwt-test', (req, res) => {
     });
   }
 });
+
+// Debug endpoint to check admin user
+app.get('/api/debug/admin', async (req, res) => {
   try {
     const adminEmail = process.env.ADMIN_EMAIL;
     if (!adminEmail) {
       return res.json({ error: 'ADMIN_EMAIL not set' });
     }
-    
-    const user = await User.findOne({ 
+
+    const user = await User.findOne({
       where: { email: adminEmail },
       attributes: ['id', 'email', 'role', 'createdAt']
     });
-    
+
     if (user) {
-      res.json({ 
-        found: true, 
+      res.json({
+        found: true,
         user: user,
         env_vars: {
           ADMIN_EMAIL: !!process.env.ADMIN_EMAIL,
@@ -132,8 +135,8 @@ app.get('/api/debug/jwt-test', (req, res) => {
         }
       });
     } else {
-      res.json({ 
-        found: false, 
+      res.json({
+        found: false,
         adminEmail,
         env_vars: {
           ADMIN_EMAIL: !!process.env.ADMIN_EMAIL,
@@ -153,22 +156,22 @@ app.post('/api/debug/test-login', async (req, res) => {
     const { email, password } = req.body;
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    
+
     console.log('Debug login attempt:', { email, receivedPassword: !!password });
     console.log('Expected admin:', { adminEmail, hasAdminPassword: !!adminPassword });
-    
+
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.json({ 
-        success: false, 
+      return res.json({
+        success: false,
         message: 'User not found',
         debug: { email, adminEmail, userExists: false }
       });
     }
-    
+
     const isMatch = await user.comparePassword(password);
     console.log('Password comparison result:', isMatch);
-    
+
     res.json({
       success: isMatch,
       user: { id: user.id, email: user.email, role: user.role },
@@ -181,6 +184,55 @@ app.post('/api/debug/test-login', async (req, res) => {
   } catch (error) {
     console.error('Debug login error:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Simple test login endpoint for admin panel
+app.post('/api/test-login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user by email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
+
+    // Check password
+    const isValidPassword = await user.comparePassword(password);
+    if (!isValidPassword) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
+
+    // Check if user is admin
+    if (user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Admin privileges required.'
+      });
+    }
+
+    // Generate token
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    res.json({
+      success: true,
+      token,
+      user: { id: user.id, email: user.email, role: user.role }
+    });
+  } catch (error) {
+    console.error('Test login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
   }
 });
 
