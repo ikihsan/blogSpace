@@ -6,10 +6,11 @@ const {
   updateBlog,
   deleteBlog,
   getAdminBlogs,
+  getAdminBlogById,
   getDashboardStats
 } = require('../controllers/blogController');
 const { authenticateToken, adminOnly } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware');
+const { upload } = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.get('/:slug', getBlogBySlug);
 router.use(authenticateToken, adminOnly);
 
 router.get('/admin/all', getAdminBlogs);
+router.get('/admin/:id', getAdminBlogById);
 router.get('/admin/stats', getDashboardStats);
 router.post('/', upload.array('images', 3), createBlog);
 router.put('/:id', upload.array('images', 3), updateBlog);

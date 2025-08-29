@@ -1,6 +1,8 @@
-const { Blog, BlogImage, User } = require('../models');
-const { Op } = require('sequelize');
+const { Blog, BlogImage, User, Comment } = require('../models');
+const { Op, Sequelize } = require('sequelize');
 const Joi = require('joi');
+const { getImageUrl } = require('../middleware/uploadMiddleware');
+const { sequelize } = require('../config/database');
 
 const createBlogSchema = Joi.object({
   title: Joi.string().min(3).max(200).required(),
@@ -56,7 +58,13 @@ const getBlogBySlug = async (req, res) => {
       where: { slug: req.params.slug, status: 'published' },
       include: [
         { model: User, attributes: ['email'] },
-        { model: BlogImage, as: 'images', attributes: ['imageUrl'] }
+        { model: BlogImage, as: 'images', attributes: ['imageUrl'] },
+        {
+          model: Comment,
+          as: 'comments',
+          attributes: ['id', 'username', 'content', 'createdAt', 'updatedAt'],
+          order: [['createdAt', 'ASC']]
+        }
       ]
     });
 
@@ -93,7 +101,7 @@ const createBlog = async (req, res) => {
     if (req.files) {
       for (const file of req.files) {
         await BlogImage.create({
-          imageUrl: `/uploads/blog-images/${file.filename}`,
+          imageUrl: getImageUrl(file),
           blogId: blog.id
         });
       }
@@ -124,7 +132,7 @@ const updateBlog = async (req, res) => {
       // await BlogImage.destroy({ where: { blogId: blog.id } });
       for (const file of req.files) {
         await BlogImage.create({
-          imageUrl: `/uploads/blog-images/${file.filename}`,
+          imageUrl: getImageUrl(file),
           blogId: blog.id
         });
       }
@@ -217,6 +225,25 @@ const getDashboardStats = async (req, res) => {
     }
 };
 
+const getAdminBlogById = async (req, res) => {
+  try {
+    const blog = await Blog.findByPk(req.params.id, {
+      include: [
+        { model: User, attributes: ['email'] },
+        { model: BlogImage, as: 'images', attributes: ['imageUrl'] }
+      ]
+    });
+
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   // Public endpoints
   getAllBlogs,
@@ -226,5 +253,6 @@ module.exports = {
   updateBlog,
   deleteBlog,
   getAdminBlogs,
-  getDashboardStats
+  getDashboardStats,
+  getAdminBlogById
 };

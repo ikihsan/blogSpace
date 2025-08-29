@@ -67,11 +67,18 @@ app.use('/test', express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api', require('./routes/comments'));
 app.use('/api/blogs', require('./routes/blogs'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'UP', timestamp: new Date() });
+  const cloudinaryConfigured = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+  res.json({
+    status: 'UP',
+    timestamp: new Date(),
+    cloudinary: cloudinaryConfigured,
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // Debug endpoint to check admin user (remove in production)
@@ -382,10 +389,19 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
+    console.log('Starting server...');
+    console.log('Connecting to database...');
     await connectDB();
+    console.log('Database connected successfully');
+    
+    console.log('Creating admin user...');
     await createAdminUser();
+    console.log('Admin user creation completed');
+    
+    console.log(`Starting server on port ${PORT}...`);
     app.listen(PORT, () => {
       console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+      console.log('Server startup complete!');
     });
   } catch (error) {
     console.error('Failed to start server:', error);
