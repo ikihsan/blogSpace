@@ -27,13 +27,23 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="loading flex items-center justify-center h-screen">
-        <div className="spinner border-4 border-indigo-500 border-t-transparent rounded-full w-12 h-12 animate-spin"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+        <span className="ml-3 text-lg text-gray-300">Loading dashboard...</span>
       </div>
     );
   }
+
   if (isError) {
-    return <div className="flex items-center justify-center h-screen text-red-500 text-xl">Error loading dashboard data.</div>;
+    return (
+      <div className="text-center py-12">
+        <div className="text-red-400 mb-4">
+          <span className="text-4xl">⚠️</span>
+        </div>
+        <h3 className="text-xl font-semibold text-white mb-2">Error loading dashboard</h3>
+        <p className="text-gray-400">Please try refreshing the page</p>
+      </div>
+    );
   }
 
   const chartData = {
@@ -48,158 +58,204 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#181f2a] text-white flex flex-col items-center relative overflow-hidden">
-      {/* Animated Background */}
+    <div className="space-y-8">
+      {/* Welcome Section */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="absolute inset-0 z-0 pointer-events-none"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-xl p-8 border border-gray-700"
       >
-        <svg width="100%" height="100%" viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          <motion.path
-            d="M0,400 C400,600 1040,200 1440,400"
-            stroke="url(#grad1)"
-            strokeWidth="80"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-          />
-          <defs>
-            <linearGradient id="grad1" x1="0" y1="0" x2="1440" y2="800" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#6366f1" />
-              <stop offset="1" stopColor="#f472b6" />
-            </linearGradient>
-          </defs>
-        </svg>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
+            <p className="text-gray-400">Monitor your blog performance and manage content</p>
+          </div>
+          <div className="flex gap-3">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/blogs/new"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <span>✏️</span>
+                New Blog
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/blogs"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg shadow-lg hover:bg-gray-600 transition-all duration-200"
+              >
+                <span>📝</span>
+                Manage Blogs
+              </Link>
+            </motion.div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Header */}
-      <section className="w-full flex flex-col items-center justify-center pt-16 pb-8 relative z-10">
-        <motion.h1 initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="text-5xl md:text-6xl font-extrabold text-center text-pink-400 mb-4">Admin Dashboard</motion.h1>
-        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }} className="text-lg md:text-xl text-gray-300 text-center max-w-2xl mb-8">
-          Manage your blog posts, track stats, and keep your content fresh and engaging.
-        </motion.p>
-        <div className="flex gap-4 justify-center flex-wrap">
-          <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/admin/blogs/new" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors flex items-center gap-2">
-              <span style={{fontSize: '1.1rem'}}>✏️</span>
-              <span>New Blog</span>
-            </Link>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/admin/blogs" className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg border-2 border-indigo-300 transition-colors flex items-center gap-2">
-              <span style={{fontSize: '1.1rem'}}>📝</span>
-              <span>Manage Blogs</span>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Stats Grid */}
-      <section className="w-full max-w-5xl px-4 py-8 relative z-10">
-        <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-3xl font-bold text-white mb-2 text-center">Blog Stats</motion.h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="bg-[#23293a] rounded-2xl shadow-lg p-8 text-center border border-indigo-900">
-            <div className="text-3xl mb-2 text-indigo-300">{stats.totalBlogs}</div>
-            <div className="text-gray-300">Total Blogs</div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="bg-[#23293a] rounded-2xl shadow-lg p-8 text-center border border-indigo-900">
-            <div className="text-3xl mb-2 text-green-300">{stats.publishedBlogs}</div>
-            <div className="text-gray-300">Published</div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="bg-[#23293a] rounded-2xl shadow-lg p-8 text-center border border-indigo-900">
-            <div className="text-3xl mb-2 text-yellow-300">{stats.draftBlogs}</div>
-            <div className="text-gray-300">Drafts</div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="bg-[#23293a] rounded-2xl shadow-lg p-8 text-center border border-indigo-900">
-            <div className="text-3xl mb-2 text-pink-300">{stats.totalViews || 0}</div>
-            <div className="text-gray-300">Total Views</div>
-          </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-indigo-500/50 transition-colors duration-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm font-medium">Total Blogs</p>
+              <p className="text-2xl font-bold text-white mt-1">{stats.totalBlogs}</p>
+            </div>
+            <div className="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">📝</span>
+            </div>
+          </div>
         </div>
-      </section>
+
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-green-500/50 transition-colors duration-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm font-medium">Published</p>
+              <p className="text-2xl font-bold text-green-400 mt-1">{stats.publishedBlogs}</p>
+            </div>
+            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">✅</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-yellow-500/50 transition-colors duration-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm font-medium">Drafts</p>
+              <p className="text-2xl font-bold text-yellow-400 mt-1">{stats.draftBlogs}</p>
+            </div>
+            <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">📝</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-pink-500/50 transition-colors duration-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm font-medium">Total Views</p>
+              <p className="text-2xl font-bold text-pink-400 mt-1">{stats.totalViews || 0}</p>
+            </div>
+            <div className="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">👁️</span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Blog Statistics Chart */}
-      <section className="w-full max-w-5xl px-4 py-8 relative z-10">
-        <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-3xl font-bold text-white mb-2 text-center">Blog Statistics</motion.h2>
-        <div className="bg-[#23293a] rounded-2xl shadow-lg p-8 border border-indigo-900">
-          <Bar data={chartData} />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
+      >
+        <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+          <span>📊</span>
+          Blog Statistics
+        </h3>
+        <div className="h-64">
+          <Bar data={chartData} options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#9CA3AF'
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: '#9CA3AF' },
+                grid: { color: '#374151' }
+              },
+              y: {
+                ticks: { color: '#9CA3AF' },
+                grid: { color: '#374151' }
+              }
+            }
+          }} />
         </div>
-      </section>
+      </motion.div>
 
       {/* Recent Blogs */}
-      <section className="w-full max-w-5xl px-4 py-8 relative z-10">
-        <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-3xl font-bold text-white mb-2 text-center">Recent Blogs</motion.h2>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.6 }}
+        className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
+      >
+        <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+          <span>🕒</span>
+          Recent Blogs
+        </h3>
         {stats.recentBlogs && stats.recentBlogs.length > 0 ? (
-          <div className="overflow-x-auto bg-[#23293a] rounded-2xl shadow-lg p-8 border border-indigo-900">
-            <table className="min-w-full text-left">
-              <thead>
-                <tr className="text-gray-400">
-                  <th className="py-2 px-4">Title</th>
-                  <th className="py-2 px-4">Status</th>
-                  <th className="py-2 px-4">Views</th>
-                  <th className="py-2 px-4">Created</th>
-                  <th className="py-2 px-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stats.recentBlogs.map(blog => (
-                  <tr key={blog.id} className="border-b border-white/10">
-                    <td className="py-2 px-4 font-semibold text-indigo-100">{blog.title}</td>
-                    <td className="py-2 px-4">
-                      <span style={{
-                        background: blog.status === 'published' ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
-                        color: blog.status === 'published' ? '#22c55e' : '#ef4444',
-                        padding: '0.25rem 0.75rem',
-                        borderRadius: '1rem',
-                        fontSize: '0.75rem',
-                        fontWeight: '600',
-                        border: `1px solid ${blog.status === 'published' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`
-                      }}>
-                        {blog.status === 'published' ? 'Published' : 'Draft'}
-                      </span>
-                    </td>
-                    <td className="py-2 px-4">{blog.views || 0}</td>
-                    <td className="py-2 px-4">{formatDate(blog.createdAt)}</td>
-                    <td className="py-2 px-4">
-                      <div className="flex gap-2">
-                        <Link to={`/admin/blogs/edit/${blog.id}`} className="btn bg-indigo-600 text-white px-3 py-1 rounded-lg shadow hover:bg-indigo-700 text-sm">Edit</Link>
-                        <a href={`/blogs/${blog.id}`} target="_blank" rel="noopener noreferrer" className="btn bg-indigo-600 text-white px-3 py-1 rounded-lg shadow hover:bg-indigo-700 text-sm">View</a>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-4">
+            {stats.recentBlogs.map((blog, index) => (
+              <motion.div
+                key={blog.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors duration-200"
+              >
+                <div className="flex-1">
+                  <h4 className="font-medium text-white mb-1">{blog.title}</h4>
+                  <div className="flex items-center gap-4 text-sm text-gray-400">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      blog.status === 'published'
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {blog.status}
+                    </span>
+                    <span>{formatDate(blog.createdAt)}</span>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Link
+                    to={`/blogs/edit/${blog.id}`}
+                    className="px-3 py-1 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-colors duration-200"
+                  >
+                    Edit
+                  </Link>
+                  <a
+                    href={`/blogs/${blog.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors duration-200"
+                  >
+                    View
+                  </a>
+                </div>
+              </motion.div>
+            ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-400">
-            <h3>No blogs found</h3>
-            <p>Create your first blog to get started!</p>
-            <Link to="/admin/blogs/new" className="btn bg-indigo-500 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-600 mt-4">Create First Blog</Link>
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-4">
+              <span className="text-4xl">📝</span>
+            </div>
+            <h4 className="text-lg font-medium text-white mb-2">No blogs yet</h4>
+            <p className="text-gray-400 mb-4">Create your first blog to get started!</p>
+            <Link
+              to="/blogs/new"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200"
+            >
+              <span>✏️</span>
+              Create First Blog
+            </Link>
           </div>
         )}
-      </section>
-
-      {/* System Info */}
-      <section className="w-full max-w-5xl px-4 py-8 relative z-10">
-        <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-3xl font-bold text-white mb-2 text-center">System Information</motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-[#23293a] rounded-2xl shadow-lg p-8 border border-indigo-900">
-          <div>
-            <h4 className="text-indigo-100 mb-2">Version</h4>
-            <p className="text-gray-400">fathi.vlogs v1.0.0</p>
-          </div>
-          <div>
-            <h4 className="text-indigo-100 mb-2">Last Updated</h4>
-            <p className="text-gray-400">{new Date().toLocaleDateString()}</p>
-          </div>
-          <div>
-            <h4 className="text-indigo-100 mb-2">Built by</h4>
-            <p className="text-gray-400">ikcodes</p>
-          </div>
-        </div>
-      </section>
+      </motion.div>
     </div>
   );
 };

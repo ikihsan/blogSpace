@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon, MagnifyingGlassIcon, FunnelIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 
 const fetchAdminBlogs = async (page, status, search) => {
   const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/admin/all`, {
@@ -40,85 +41,258 @@ const ManageBlogs = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Manage Blogs</h1>
-      
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex space-x-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg"
-          />
-          <select
-            value={status}
-            onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg"
-          >
-            <option value="">All Statuses</option>
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
-          </select>
-        </div>
-        <Link to="/blogs/new" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">
-          Create New Blog
-        </Link>
-      </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6"
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-8"
+        >
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                Manage Blogs
+              </h1>
+              <p className="text-gray-400 text-lg">Create, edit, and manage your blog posts</p>
+            </div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link
+                to="/blogs/new"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <PlusIcon className="h-5 w-5 mr-2" />
+                Create New Blog
+              </Link>
+            </motion.div>
+          </div>
+        </motion.div>
 
-      {isLoading ? (
-        <div>Loading blogs...</div>
-      ) : isError ? (
-        <div className="text-red-500">Error loading blogs.</div>
-      ) : (
-        <div className="bg-gray-800 rounded-lg shadow">
-          <table className="w-full">
-            <thead className="bg-gray-700">
-              <tr>
-                <th className="p-4 text-left">Title</th>
-                <th className="p-4 text-left">Status</th>
-                <th className="p-4 text-left">Created At</th>
-                <th className="p-4 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.blogs.map(blog => (
-                <tr key={blog.id} className="border-b border-gray-700 hover:bg-gray-700">
-                  <td className="p-4">{blog.title}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      blog.status === 'published' ? 'bg-green-500 text-green-900' : 
-                      blog.status === 'draft' ? 'bg-yellow-500 text-yellow-900' : 'bg-gray-500 text-gray-900'
-                    }`}>{blog.status}</span>
-                  </td>
-                  <td className="p-4">{new Date(blog.createdAt).toLocaleDateString()}</td>
-                  <td className="p-4 flex space-x-2">
-                    <Link to={`/blogs/edit/${blog.id}`} className="text-indigo-400 hover:text-indigo-300">
-                      <PencilIcon className="h-5 w-5" />
-                    </Link>
-                    <button onClick={() => handleDelete(blog.id)} className="text-red-400 hover:text-red-300">
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      
-      <div className="flex justify-center items-center mt-6 space-x-4">
-        <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50">
-          Previous
-        </button>
-        <span>Page {page} of {data?.totalPages || 1}</span>
-        <button onClick={() => setPage(p => p + 1)} disabled={page === data?.totalPages || data?.blogs.length === 0} className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50">
-          Next
-        </button>
+        {/* Filters Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 shadow-xl mb-8"
+        >
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search blogs by title..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-400"
+              />
+            </div>
+            <div className="relative">
+              <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <select
+                value={status}
+                onChange={(e) => { setStatus(e.target.value); setPage(1); }}
+                className="pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-white min-w-[180px]"
+              >
+                <option value="">All Statuses</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Content Section */}
+        {isLoading ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col justify-center items-center py-16"
+          >
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-500 border-t-transparent mb-4"></div>
+            <p className="text-xl text-gray-400">Loading your blogs...</p>
+          </motion.div>
+        ) : isError ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-red-900/20 border border-red-700/50 rounded-2xl p-8 text-center shadow-xl"
+          >
+            <div className="text-red-400 mb-4">
+              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-red-400 mb-2">Error Loading Blogs</h3>
+            <p className="text-gray-300">Please try refreshing the page or contact support if the problem persists.</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-gray-700/50"
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gradient-to-r from-gray-800/80 to-gray-700/80">
+                  <tr>
+                    <th className="p-6 text-left font-semibold text-gray-200">Blog Details</th>
+                    <th className="p-6 text-left font-semibold text-gray-200">Status</th>
+                    <th className="p-6 text-left font-semibold text-gray-200">Created</th>
+                    <th className="p-6 text-left font-semibold text-gray-200">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.blogs.map((blog, index) => (
+                    <motion.tr
+                      key={blog.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.05 }}
+                      className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-all duration-200 group"
+                    >
+                      <td className="p-6">
+                        <div className="font-medium text-white group-hover:text-indigo-300 transition-colors duration-200">
+                          {blog.title}
+                        </div>
+                        <div className="text-sm text-gray-400 mt-1 font-mono">
+                          ID: {blog.id}
+                        </div>
+                      </td>
+                      <td className="p-6">
+                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${
+                          blog.status === 'published'
+                            ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                            : blog.status === 'draft'
+                            ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                            : 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                        }`}>
+                          {blog.status.charAt(0).toUpperCase() + blog.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="p-6 text-gray-300">
+                        <div className="text-sm">
+                          {new Date(blog.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {new Date(blog.createdAt).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </td>
+                      <td className="p-6">
+                        <div className="flex space-x-2">
+                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <Link
+                              to={`/blogs/edit/${blog.id}`}
+                              className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition-all duration-200 border border-indigo-500/20 hover:border-indigo-400/40"
+                              title="Edit Blog"
+                            >
+                              <PencilIcon className="h-4 w-4 mr-2" />
+                              Edit
+                            </Link>
+                          </motion.div>
+                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <button
+                              onClick={() => handleDelete(blog.id)}
+                              className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all duration-200 border border-red-500/20 hover:border-red-400/40"
+                              title="Delete Blog"
+                            >
+                              <TrashIcon className="h-4 w-4 mr-2" />
+                              Delete
+                            </button>
+                          </motion.div>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Pagination */}
+        {data && data.blogs.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex justify-center items-center mt-8 space-x-4"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setPage(p => Math.max(p - 1, 1))}
+              disabled={page === 1}
+              className="px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none"
+            >
+              Previous
+            </motion.button>
+
+            <div className="flex items-center space-x-3 bg-gray-800/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-gray-700/50">
+              <span className="text-gray-400">Page</span>
+              <span className="px-3 py-1 bg-indigo-600 rounded-lg font-semibold text-white min-w-[40px] text-center">
+                {page}
+              </span>
+              <span className="text-gray-400">of</span>
+              <span className="px-3 py-1 bg-gray-700 rounded-lg font-semibold text-white min-w-[40px] text-center">
+                {data?.totalPages || 1}
+              </span>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setPage(p => p + 1)}
+              disabled={page === data?.totalPages || data?.blogs.length === 0}
+              className="px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none"
+            >
+              Next
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Empty State */}
+        {data && data.blogs.length === 0 && !isLoading && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-16 bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 shadow-xl"
+          >
+            <div className="text-gray-400 mb-4">
+              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">No Blogs Found</h3>
+            <p className="text-gray-500 mb-6">Get started by creating your first blog post</p>
+            <Link
+              to="/blogs/new"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              <PlusIcon className="h-5 w-5 mr-2" />
+              Create Your First Blog
+            </Link>
+          </motion.div>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

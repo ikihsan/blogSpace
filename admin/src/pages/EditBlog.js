@@ -3,18 +3,25 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import { PhotoIcon, ArrowLeftIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 
 const fetchBlog = async (id) => {
-  const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/admin/all?id=${id}`);
-  // Assuming the endpoint can filter by ID and returns it in the blogs array
-  return data.blogs[0];
+  const token = localStorage.getItem('token');
+  const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/admin/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  return data;
 };
 
 const EditBlog = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  
+
   const { data: blog, isLoading, isError } = useQuery(['blog', id], () => fetchBlog(id));
 
   const [title, setTitle] = useState('');
@@ -32,6 +39,7 @@ const EditBlog = () => {
 
   const mutation = useMutation(
     (updatedBlog) => {
+      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('title', updatedBlog.title);
       formData.append('content', updatedBlog.content);
@@ -42,7 +50,10 @@ const EditBlog = () => {
         }
       }
       return axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        }
       });
     },
     {
@@ -71,78 +82,255 @@ const EditBlog = () => {
     setImages(e.target.files);
   };
 
-  if (isLoading) return <div>Loading blog...</div>;
-  if (isError) return <div className="text-red-500">Error loading blog data.</div>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-500 border-t-transparent mb-4"></div>
+          <p className="text-xl text-gray-400">Loading blog...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-red-900/20 border border-red-700/50 rounded-2xl p-8 text-center">
+            <div className="text-red-400 mb-4">
+              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-red-400 mb-2">Error Loading Blog</h3>
+            <p className="text-gray-300 mb-6">Unable to load blog data. Please try again.</p>
+            <Link
+              to="/blogs"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Back to Blogs
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Edit Blog</h1>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-300">Title</label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full bg-gray-800 border border-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-300">Content</label>
-          <textarea
-            id="content"
-            rows="10"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="mt-1 block w-full bg-gray-800 border border-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            required
-          ></textarea>
-        </div>
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-300">Status</label>
-          <select
-            id="status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="mt-1 block w-full bg-gray-800 border border-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
-          </select>
-        </div>
-        <div>
-            <h3 className="text-sm font-medium text-gray-300 mb-2">Current Images</h3>
-            <div className="flex space-x-4">
-                {blog.images && blog.images.map(img => (
-                    <img key={img.id} src={`${process.env.REACT_APP_API_URL.replace('/api', '')}${img.imageUrl}`} alt="blog" className="h-24 w-24 object-cover rounded-md" />
-                ))}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6"
+    >
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-8"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <Link
+              to="/blogs"
+              className="inline-flex items-center text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Back to Blogs
+            </Link>
+            <div className="flex items-center space-x-3">
+              <PencilSquareIcon className="h-5 w-5 text-indigo-400" />
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                  Edit Blog
+                </h1>
+                <p className="text-gray-400 text-sm">Update your blog post details</p>
+              </div>
             </div>
-        </div>
-        <div>
-          <label htmlFor="images" className="block text-sm font-medium text-gray-300">Upload New Images (optional, replaces existing)</label>
-          <input
-            type="file"
-            id="images"
-            multiple
-            accept="image/*"
-            onChange={handleImageChange}
-            className="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-          />
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={mutation.isLoading}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg disabled:opacity-50"
+          </div>
+        </motion.div>
+
+        {/* Form */}
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          onSubmit={handleSubmit}
+          className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 shadow-xl space-y-8"
+        >
+          {/* Title Field */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
           >
-            {mutation.isLoading ? 'Updating...' : 'Update Blog'}
-          </button>
-        </div>
-      </form>
-    </div>
+            <label htmlFor="title" className="block text-sm font-semibold text-gray-200 mb-3">
+              Blog Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter an engaging title for your blog..."
+              required
+            />
+          </motion.div>
+
+          {/* Content Field */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
+          >
+            <label htmlFor="content" className="block text-sm font-semibold text-gray-200 mb-3">
+              Content
+            </label>
+            <textarea
+              id="content"
+              rows="12"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 resize-vertical"
+              placeholder="Write your blog content here..."
+              required
+            />
+          </motion.div>
+
+          {/* Status Field */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+          >
+            <label htmlFor="status" className="block text-sm font-semibold text-gray-200 mb-3">
+              Publication Status
+            </label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            >
+              <option value="draft" className="bg-gray-800">Draft - Save as draft</option>
+              <option value="published" className="bg-gray-800">Published - Make it live</option>
+              <option value="archived" className="bg-gray-800">Archived - Hide from public</option>
+            </select>
+          </motion.div>
+
+          {/* Current Images */}
+          {blog.images && blog.images.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+            >
+              <label className="block text-sm font-semibold text-gray-200 mb-3">
+                <div className="flex items-center">
+                  <PhotoIcon className="h-5 w-5 mr-2 text-indigo-400" />
+                  Current Images
+                </div>
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-900/30 rounded-xl border border-gray-600/50">
+                {blog.images.map(img => (
+                  <div key={img.id} className="relative group">
+                    <img
+                      src={`${process.env.REACT_APP_API_URL.replace('/api', '')}${img.imageUrl}`}
+                      alt="blog"
+                      className="h-24 w-full object-cover rounded-lg border border-gray-600/50 group-hover:border-indigo-400/50 transition-colors duration-200"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                      <span className="text-white text-xs font-medium">Current Image</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                These images will be replaced if you upload new ones below.
+              </p>
+            </motion.div>
+          )}
+
+          {/* Upload New Images */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.7 }}
+          >
+            <label htmlFor="images" className="block text-sm font-semibold text-gray-200 mb-3">
+              <div className="flex items-center">
+                <PhotoIcon className="h-5 w-5 mr-2 text-indigo-400" />
+                Upload New Images (Optional)
+              </div>
+            </label>
+            <div className="relative">
+              <input
+                type="file"
+                id="images"
+                multiple
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 file:transition-colors file:cursor-pointer"
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Supported formats: JPG, PNG, GIF. Maximum file size: 5MB each. Max 3 images.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Submit Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.8 }}
+            className="flex justify-end space-x-4 pt-6 border-t border-gray-700/50"
+          >
+            <Link
+              to="/blogs"
+              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-all duration-200"
+            >
+              Cancel
+            </Link>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              disabled={mutation.isLoading}
+              className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {mutation.isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                  Updating Blog...
+                </div>
+              ) : (
+                'Update Blog'
+              )}
+            </motion.button>
+          </motion.div>
+        </motion.form>
+
+        {/* Tips Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
+          className="mt-8 bg-indigo-900/20 border border-indigo-700/30 rounded-xl p-6"
+        >
+          <h3 className="text-lg font-semibold text-indigo-300 mb-3">Editing Tips</h3>
+          <ul className="text-sm text-gray-300 space-y-2">
+            <li>• Make sure your title is clear and engaging</li>
+            <li>• Review your content for spelling and grammar</li>
+            <li>• Upload new images only if you want to replace existing ones</li>
+            <li>• Use archived status to temporarily hide published posts</li>
+          </ul>
+        </motion.div>
+      </div>
+    </motion.div>
   );
 };
 
