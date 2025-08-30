@@ -76,6 +76,7 @@ const EditBlog = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     mutation.mutate({
+      id,
       title,
       content,
       status,

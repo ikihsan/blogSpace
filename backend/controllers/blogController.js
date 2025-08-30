@@ -115,14 +115,17 @@ const createBlog = async (req, res) => {
 };
 
 const updateBlog = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const { error } = updateBlogSchema.validate(req.body);
     if (error) {
+      await transaction.rollback();
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    const blog = await Blog.findByPk(req.params.id);
+    const blog = await Blog.findByPk(req.params.id, { transaction });
     if (!blog) {
+      await transaction.rollback();
       return res.status(404).json({ message: 'Blog not found' });
     }
 
@@ -131,13 +134,14 @@ const updateBlog = async (req, res) => {
       title: req.body.title,
       content: req.body.content,
       status: req.body.status
-    });
+    }, { transaction });
 
     // Handle selective image removal
     if (req.body.keepImages) {
       let keepImages = [];
       try {
         keepImages = JSON.parse(req.body.keepImages);
+        // Keep as strings since IDs are UUIDs
       } catch (e) {
         // fallback: treat as empty
         keepImages = [];
@@ -147,7 +151,8 @@ const updateBlog = async (req, res) => {
         where: {
           blogId: blog.id,
           id: { [Sequelize.Op.notIn]: keepImages }
-        }
+        },
+        transaction
       });
     }
 
@@ -157,9 +162,11 @@ const updateBlog = async (req, res) => {
         await BlogImage.create({
           imageUrl: getImageUrl(file),
           blogId: blog.id
-        });
+        }, { transaction });
       }
     }
+
+    await transaction.commit();
 
     const updatedBlog = await Blog.findByPk(req.params.id, {
       include: [{ model: BlogImage, as: 'images' }]
@@ -167,6 +174,8 @@ const updateBlog = async (req, res) => {
 
     res.json(updatedBlog);
   } catch (error) {
+    await transaction.rollback();
+    console.error('Error updating blog:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -205,7 +214,7 @@ const getAdminBlogs = async (req, res) => {
         where: whereClause,
         include: [
           { model: User, attributes: ['email'] },
-          { model: BlogImage, as: 'images', attributes: ['imageUrl'] }
+          { model: BlogImage, as: 'images', attributes: ['id', 'imageUrl'] }
         ],
         order: [['createdAt', 'DESC']],
         limit: parseInt(limit),
@@ -253,7 +262,7 @@ const getAdminBlogById = async (req, res) => {
     const blog = await Blog.findByPk(req.params.id, {
       include: [
         { model: User, attributes: ['email'] },
-        { model: BlogImage, as: 'images', attributes: ['imageUrl'] }
+        { model: BlogImage, as: 'images', attributes: ['id', 'imageUrl'] }
       ]
     });
 
