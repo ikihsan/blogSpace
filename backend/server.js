@@ -81,6 +81,7 @@ app.use('/test', express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api', require('./routes/comments'));
+app.use('/api/migrate', require('./routes/migrate'));
 app.use('/api/blogs', require('./routes/blogs'));
 
 // Health check endpoint
@@ -92,43 +93,6 @@ app.get('/api/health', (req, res) => {
     cloudinary: cloudinaryConfigured,
     environment: process.env.NODE_ENV || 'development'
   });
-});
-
-// Migration endpoint for comments table
-app.post('/api/migrate/comments', async (req, res) => {
-  try {
-    console.log('Running comment migration...');
-    const { sequelize } = require('./config/database');
-    const { Comment } = require('./models');
-
-    // Check if status column exists
-    const tableDescription = await sequelize.getQueryInterface().describeTable('Comments');
-
-    if (!tableDescription.status) {
-      console.log('Adding status column...');
-      await sequelize.getQueryInterface().addColumn('Comments', 'status', {
-        type: sequelize.Sequelize.STRING,
-        defaultValue: 'active',
-        allowNull: false
-      });
-    }
-
-    // Update existing comments
-    const [results] = await sequelize.query(`
-      UPDATE "Comments"
-      SET status = 'active'
-      WHERE status IS NULL OR status = ''
-    `);
-
-    res.json({
-      message: 'Migration completed',
-      statusColumnAdded: !tableDescription.status,
-      commentsUpdated: results
-    });
-  } catch (error) {
-    console.error('Migration error:', error);
-    res.status(500).json({ error: error.message });
-  }
 });
 
 // Debug endpoint to check JWT_SECRET
