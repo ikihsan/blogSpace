@@ -6,6 +6,7 @@ const {
   deleteComment,
   archiveComment
 } = require('../controllers/commentController');
+const { authenticateToken, adminOnly } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -22,6 +23,9 @@ router.get('/:blogId/comments/count', getCommentCount);
 
 // Create a new comment for a specific blog
 router.post('/:blogId/comments', createComment);
+
+// Admin routes - require authentication and admin privileges
+router.use(authenticateToken, adminOnly);
 
 // Delete a comment
 router.delete('/:id', deleteComment);
