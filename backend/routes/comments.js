@@ -21,16 +21,17 @@ router.get('/:blogId/comments', getCommentsByBlogId);
 // Get comment count for a specific blog
 router.get('/:blogId/comments/count', getCommentCount);
 
-// Create a new comment for a specific blog
+
+// Create a new comment for a specific blog (public)
 router.post('/:blogId/comments', createComment);
 
 // Admin routes - require authentication and admin privileges
 router.use(authenticateToken, adminOnly);
 
-// Delete a comment
+// Delete a comment (admin only)
 router.delete('/:id', deleteComment);
 
-// Archive a comment
+// Archive a comment (admin only)
 router.patch('/:id/archive', archiveComment);
 
 module.exports = router;
