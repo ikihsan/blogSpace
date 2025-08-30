@@ -38,7 +38,7 @@ const CommentSection = ({ blogId }) => {
       setIsSubmitting(true);
       setError('');
       setSuccess('');
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/blogs/${blogId}/comments`, {
+  const response = await axios.post(`${process.env.REACT_APP_API_URL}/comments/${blogId}/comments`, {
         username: newComment.username.trim(),
         content: newComment.content.trim()
       });
