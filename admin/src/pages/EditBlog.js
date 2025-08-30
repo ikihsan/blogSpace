@@ -26,13 +26,15 @@ const EditBlog = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [status, setStatus] = useState('draft');
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]); // new images to upload
+  const [existingImages, setExistingImages] = useState([]); // images already on blog
 
   useEffect(() => {
     if (blog) {
       setTitle(blog.title);
       setContent(blog.content);
       setStatus(blog.status);
+      setExistingImages(blog.images || []);
     }
   }, [blog]);
 
@@ -43,11 +45,14 @@ const EditBlog = () => {
       formData.append('title', updatedBlog.title);
       formData.append('content', updatedBlog.content);
       formData.append('status', updatedBlog.status);
-      if (updatedBlog.images.length > 0) {
+      // Attach new images
+      if (updatedBlog.images && updatedBlog.images.length > 0) {
         for (let i = 0; i < updatedBlog.images.length; i++) {
           formData.append('images', updatedBlog.images[i]);
         }
       }
+      // Attach IDs of images to keep
+      formData.append('keepImages', JSON.stringify(updatedBlog.keepImages));
       return axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -70,7 +75,13 @@ const EditBlog = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mutation.mutate({ title, content, status, images });
+    mutation.mutate({
+      title,
+      content,
+      status,
+      images,
+      keepImages: existingImages.map(img => img.id)
+    });
   };
 
   const handleImageChange = (e) => {
@@ -79,6 +90,11 @@ const EditBlog = () => {
       return;
     }
     setImages(e.target.files);
+  };
+
+  // Remove image from existingImages
+  const handleRemoveExistingImage = (imgId) => {
+    setExistingImages(existingImages.filter(img => img.id !== imgId));
   };
 
   if (isLoading) {
@@ -218,7 +234,7 @@ const EditBlog = () => {
           </motion.div>
 
           {/* Current Images */}
-          {blog.images && blog.images.length > 0 ? (
+          {existingImages && existingImages.length > 0 ? (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -228,7 +244,7 @@ const EditBlog = () => {
               <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'radial-gradient(circle at 60% 40%, #6366f1 0%, transparent 70%)'}}></div>
               <label className="block text-base font-bold text-indigo-300 mb-2 z-10 relative">Current Images</label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl border border-indigo-700/30 z-10 relative">
-                {blog.images.map(img => (
+                {existingImages.map(img => (
                   <div key={img.id} className="relative group">
                     <img
                       src={`${process.env.REACT_APP_API_URL.replace('/api', '')}${img.imageUrl}`}
@@ -238,6 +254,11 @@ const EditBlog = () => {
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
                       <span className="text-white text-xs font-semibold">Current Image</span>
                     </div>
+                    <button
+                      type="button"
+                      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full px-2 py-1 text-xs font-bold shadow transition-all duration-200 z-20"
+                      onClick={() => handleRemoveExistingImage(img.id)}
+                    >Remove</button>
                   </div>
                 ))}
               </div>
@@ -294,7 +315,12 @@ const EditBlog = () => {
             >
               Cancel
             </Link>
-            {/* Submit button removed for cleaner look */}
+            <button
+              type="submit"
+              className="px-6 py-3 bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 text-white font-semibold rounded-xl transition-all duration-200 shadow"
+            >
+              Save Changes
+            </button>
           </motion.div>
         </motion.form>
 
