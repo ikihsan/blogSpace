@@ -13,7 +13,7 @@ const CommentSection = ({ blogId }) => {
   const fetchComments = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/${blogId}/comments`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/comments/${blogId}/comments`);
       setComments(response.data.comments || []);
     } catch (error) {
       console.error('Error fetching comments:', error);
@@ -38,7 +38,7 @@ const CommentSection = ({ blogId }) => {
       setIsSubmitting(true);
       setError('');
       setSuccess('');
-  const response = await axios.post(`${process.env.REACT_APP_API_URL}/comments/${blogId}/comments`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/comments/${blogId}/comments`, {
         username: newComment.username.trim(),
         content: newComment.content.trim()
       });

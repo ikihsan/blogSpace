@@ -116,11 +116,6 @@ const createBlog = async (req, res) => {
 
 const updateBlog = async (req, res) => {
   try {
-    // Extract keepImages from FormData if present
-    if (req.body.keepImages && Array.isArray(req.body.keepImages)) {
-      req.body.keepImages = JSON.stringify(req.body.keepImages);
-    }
-
     const { error } = updateBlogSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
@@ -144,8 +139,10 @@ const updateBlog = async (req, res) => {
       try {
         keepImages = JSON.parse(req.body.keepImages);
       } catch (e) {
+        // fallback: treat as empty
         keepImages = [];
       }
+      // Remove images not in keepImages
       await BlogImage.destroy({
         where: {
           blogId: blog.id,
