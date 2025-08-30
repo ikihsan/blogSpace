@@ -53,7 +53,7 @@ const EditBlog = () => {
       }
       // Attach IDs of images to keep
       formData.append('keepImages', JSON.stringify(updatedBlog.keepImages));
-      return axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}`, formData, {
+      return axios.put(`${process.env.REACT_APP_API_URL}/blogs/${updatedBlog.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`
