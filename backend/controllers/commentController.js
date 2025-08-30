@@ -19,9 +19,9 @@ const getCommentsByBlogId = async (req, res) => {
     }
 
     const comments = await Comment.findAll({
-      where: { blogId },
+      where: { blogId, status: 'active' },
       order: [['createdAt', 'ASC']],
-      attributes: ['id', 'username', 'content', 'createdAt', 'updatedAt']
+      attributes: ['id', 'username', 'content', 'createdAt', 'updatedAt', 'status']
     });
 
     res.json({
@@ -83,7 +83,7 @@ const getCommentCount = async (req, res) => {
     const { blogId } = req.params;
 
     const count = await Comment.count({
-      where: { blogId }
+      where: { blogId, status: 'active' }
     });
 
     res.json({ blogId, commentCount: count });
@@ -93,8 +93,53 @@ const getCommentCount = async (req, res) => {
   }
 };
 
+// Delete a comment
+const deleteComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('Deleting comment with ID:', id);
+
+    const comment = await Comment.findByPk(id);
+    if (!comment) {
+      console.log('Comment not found');
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    await comment.destroy();
+    console.log('Comment deleted successfully');
+    res.json({ message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Archive a comment
+const archiveComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('Archiving comment with ID:', id);
+
+    const comment = await Comment.findByPk(id);
+    if (!comment) {
+      console.log('Comment not found');
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    comment.status = 'archived';
+    await comment.save();
+    console.log('Comment archived successfully');
+    res.json({ message: 'Comment archived successfully' });
+  } catch (error) {
+    console.error('Error archiving comment:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   getCommentsByBlogId,
   createComment,
-  getCommentCount
+  getCommentCount,
+  deleteComment,
+  archiveComment
 };

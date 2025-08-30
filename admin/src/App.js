@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import ManageBlogs from './pages/ManageBlogs';
 import NewBlog from './pages/NewBlog';
 import EditBlog from './pages/EditBlog';
+import CommentsPage from './pages/CommentsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/Layout';
@@ -35,6 +36,7 @@ function App() {
               <Route path="blogs" element={<ManageBlogs />} />
               <Route path="blogs/new" element={<NewBlog />} />
               <Route path="blogs/edit/:id" element={<EditBlog />} />
+              <Route path="blogs/comments/:blogId" element={<CommentsPage />} />
               <Route path="*" element={<NotFound />} /> {/* Catch-all for unknown routes */}
             </Route>
             <Route path="*" element={<NotFound />} /> {/* Top-level catch-all */}

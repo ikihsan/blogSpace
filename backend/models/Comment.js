@@ -30,8 +30,15 @@ const Comment = sequelize.define('Comment', {
       model: 'Blogs',
       key: 'id'
     }
-  }
-}, {
+  },
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: 'active',
+    allowNull: false,
+    validate: {
+      isIn: [['active', 'archived']]
+    }
+  },
   timestamps: true,
   indexes: [
     {

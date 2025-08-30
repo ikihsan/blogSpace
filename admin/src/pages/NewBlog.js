@@ -50,7 +50,7 @@ const NewBlog = () => {
       toast.warn('You can only upload a maximum of 3 images');
       return;
     }
-    setImages(e.target.files);
+    setImages(Array.from(e.target.files));
   };
 
   return (
@@ -163,7 +163,7 @@ const NewBlog = () => {
             <label htmlFor="images" className="block text-sm font-semibold text-gray-200 mb-3">
               Images (Optional - Max 3)
             </label>
-            <div className="relative">
+            <div className="relative space-y-4">
               <input
                 type="file"
                 id="images"
@@ -175,6 +175,46 @@ const NewBlog = () => {
               <p className="text-xs text-gray-500 mt-2">
                 Supported formats: JPG, PNG, GIF. Maximum file size: 5MB each.
               </p>
+              {images.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  {images.map((img, idx) => (
+                    <div key={idx} className="relative group bg-gray-900/60 rounded-xl p-2 border border-gray-700 flex flex-col items-center">
+                      <img
+                        src={typeof img === 'string' ? img : URL.createObjectURL(img)}
+                        alt={`blog-upload-${idx}`}
+                        className="h-32 w-full object-cover rounded-lg mb-2"
+                      />
+                      <div className="flex gap-2">
+                        <label className="px-2 py-1 bg-indigo-600 text-white rounded text-xs cursor-pointer hover:bg-indigo-700 transition-colors">
+                          Replace
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={e => {
+                              if (e.target.files && e.target.files[0]) {
+                                const newImages = [...images];
+                                newImages[idx] = e.target.files[0];
+                                setImages(newImages);
+                              }
+                            }}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          className="px-2 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition-colors"
+                          onClick={() => {
+                            const newImages = images.filter((_, i) => i !== idx);
+                            setImages(newImages);
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
 

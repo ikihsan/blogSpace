@@ -13,6 +13,7 @@ const fetchAdminBlogs = async (page, status, search) => {
 };
 
 const ManageBlogs = () => {
+
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
@@ -202,7 +203,6 @@ const ManageBlogs = () => {
                               className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition-all duration-200 border border-indigo-500/20 hover:border-indigo-400/40"
                               title="Edit Blog"
                             >
-                              {/* Edit action icon removed for cleaner look */}
                               Edit
                             </Link>
                           </motion.div>
@@ -212,9 +212,17 @@ const ManageBlogs = () => {
                               className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all duration-200 border border-red-500/20 hover:border-red-400/40"
                               title="Delete Blog"
                             >
-                              {/* Delete action icon removed for cleaner look */}
                               Delete
                             </button>
+                          </motion.div>
+                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <Link
+                              to={`/blogs/comments/${blog.id}`}
+                              className="inline-flex items-center px-4 py-2 text-sm font-medium text-yellow-400 hover:text-yellow-300 bg-yellow-500/10 hover:bg-yellow-500/20 rounded-lg transition-all duration-200 border border-yellow-500/20 hover:border-yellow-400/40"
+                              title="View Comments"
+                            >
+                              Comments
+                            </Link>
                           </motion.div>
                         </div>
                       </td>
