@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 
 const fetchComments = async (blogId) => {
-  const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/${blogId}/comments`);
+  const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/comments/${blogId}/comments`);
   return data;
 };
 
