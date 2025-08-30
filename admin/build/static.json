@@ -1,0 +1,5 @@
+{
+  "redirects": [
+    { "source": "/admin", "destination": "https://checkk-czzg.onrender.com/admin", "type": 301 }
+  ]
+}
