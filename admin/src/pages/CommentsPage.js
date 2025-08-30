@@ -14,10 +14,15 @@ const CommentsPage = () => {
   const { blogId } = useParams();
   const queryClient = useQueryClient();
 
+  const token = localStorage.getItem('token');
+
   const { data, isLoading, isError } = useQuery(['blogComments', blogId], () => fetchComments(blogId));
 
   const deleteMutation = useMutation(
-    (commentId) => axios.delete(`${process.env.REACT_APP_API_URL}/comments/${commentId}`),
+    (commentId) => axios.delete(
+      `${process.env.REACT_APP_API_URL}/comments/${commentId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    ),
     {
       onSuccess: () => {
         toast.success('Comment deleted');
@@ -30,7 +35,11 @@ const CommentsPage = () => {
   );
 
   const archiveMutation = useMutation(
-    (commentId) => axios.patch(`${process.env.REACT_APP_API_URL}/comments/${commentId}/archive`),
+    (commentId) => axios.patch(
+      `${process.env.REACT_APP_API_URL}/comments/${commentId}/archive`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    ),
     {
       onSuccess: () => {
         toast.success('Comment archived');
