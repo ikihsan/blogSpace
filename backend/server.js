@@ -80,9 +80,9 @@ app.use('/test', express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api', require('./routes/comments'));
-app.use('/api/migrate', require('./routes/migrate'));
 app.use('/api/blogs', require('./routes/blogs'));
+app.use('/api/comments', require('./routes/comments'));
+app.use('/api/migrate', require('./routes/migrate'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

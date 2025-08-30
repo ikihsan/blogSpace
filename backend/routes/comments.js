@@ -9,14 +9,19 @@ const {
 
 const router = express.Router();
 
+// Test endpoint to verify routes are working
+router.get('/test', (req, res) => {
+  res.json({ message: 'Comments routes are working!' });
+});
+
 // Get all comments for a specific blog
-router.get('/blogs/:blogId/comments', getCommentsByBlogId);
+router.get('/:blogId/comments', getCommentsByBlogId);
 
 // Get comment count for a specific blog
-router.get('/blogs/:blogId/comments/count', getCommentCount);
+router.get('/:blogId/comments/count', getCommentCount);
 
 // Create a new comment for a specific blog
-router.post('/blogs/:blogId/comments', createComment);
+router.post('/:blogId/comments', createComment);
 
 // Delete a comment
 router.delete('/:id', deleteComment);
