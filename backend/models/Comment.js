@@ -38,15 +38,29 @@ const Comment = sequelize.define('Comment', {
     validate: {
       isIn: [['active', 'archived']]
     }
+  },
+  // Ensure timestamps are properly defined
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   }
 }, {
-  timestamps: true,
+  timestamps: false, // We're defining timestamps manually
   indexes: [
     {
       fields: ['blogId']
     },
     {
       fields: ['createdAt']
+    },
+    {
+      fields: ['status']
     }
   ]
 });

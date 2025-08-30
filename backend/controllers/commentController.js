@@ -98,18 +98,22 @@ const deleteComment = async (req, res) => {
   try {
     const { id } = req.params;
     console.log('Deleting comment with ID:', id);
+    console.log('Request headers:', req.headers);
+    console.log('Request method:', req.method);
 
     const comment = await Comment.findByPk(id);
     if (!comment) {
-      console.log('Comment not found');
+      console.log('Comment not found for ID:', id);
       return res.status(404).json({ message: 'Comment not found' });
     }
 
+    console.log('Found comment:', comment.toJSON());
     await comment.destroy();
     console.log('Comment deleted successfully');
     res.json({ message: 'Comment deleted successfully' });
   } catch (error) {
     console.error('Error deleting comment:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -119,19 +123,23 @@ const archiveComment = async (req, res) => {
   try {
     const { id } = req.params;
     console.log('Archiving comment with ID:', id);
+    console.log('Request headers:', req.headers);
 
     const comment = await Comment.findByPk(id);
     if (!comment) {
-      console.log('Comment not found');
+      console.log('Comment not found for ID:', id);
       return res.status(404).json({ message: 'Comment not found' });
     }
 
+    console.log('Found comment before archive:', comment.toJSON());
     comment.status = 'archived';
     await comment.save();
     console.log('Comment archived successfully');
+    console.log('Comment after archive:', comment.toJSON());
     res.json({ message: 'Comment archived successfully' });
   } catch (error) {
     console.error('Error archiving comment:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

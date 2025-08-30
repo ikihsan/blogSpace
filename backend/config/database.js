@@ -34,7 +34,15 @@ const connectDB = async () => {
   try {
     await sequelize.authenticate();
     console.log('Database Connected...');
-    await sequelize.sync({ alter: true }); // Use alter: true to update schema without dropping data
+
+    // In production, force sync to ensure schema is up to date
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Production environment detected, forcing database sync...');
+      await sequelize.sync({ alter: true, force: false });
+    } else {
+      await sequelize.sync({ alter: true });
+    }
+
     console.log('All models were synchronized successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
