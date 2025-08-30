@@ -13,7 +13,8 @@ const createBlogSchema = Joi.object({
 const updateBlogSchema = Joi.object({
   title: Joi.string().min(3).max(200).optional(),
   content: Joi.string().min(20).optional(),
-  status: Joi.string().valid('draft', 'published', 'archived').optional()
+  status: Joi.string().valid('draft', 'published', 'archived').optional(),
+  keepImages: Joi.string().optional() // will be JSON stringified array of image IDs
 });
 
 // Public endpoints
@@ -115,6 +116,11 @@ const createBlog = async (req, res) => {
 
 const updateBlog = async (req, res) => {
   try {
+    // Extract keepImages from FormData if present
+    if (req.body.keepImages && Array.isArray(req.body.keepImages)) {
+      req.body.keepImages = JSON.stringify(req.body.keepImages);
+    }
+
     const { error } = updateBlogSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
@@ -125,11 +131,31 @@ const updateBlog = async (req, res) => {
       return res.status(404).json({ message: 'Blog not found' });
     }
 
-    await blog.update(req.body);
+    // Update basic fields
+    await blog.update({
+      title: req.body.title,
+      content: req.body.content,
+      status: req.body.status
+    });
 
+    // Handle selective image removal
+    if (req.body.keepImages) {
+      let keepImages = [];
+      try {
+        keepImages = JSON.parse(req.body.keepImages);
+      } catch (e) {
+        keepImages = [];
+      }
+      await BlogImage.destroy({
+        where: {
+          blogId: blog.id,
+          id: { [Sequelize.Op.notIn]: keepImages }
+        }
+      });
+    }
+
+    // Add new images
     if (req.files) {
-      // Optionally clear existing images first
-      // await BlogImage.destroy({ where: { blogId: blog.id } });
       for (const file of req.files) {
         await BlogImage.create({
           imageUrl: getImageUrl(file),
@@ -139,7 +165,7 @@ const updateBlog = async (req, res) => {
     }
 
     const updatedBlog = await Blog.findByPk(req.params.id, {
-        include: [{ model: BlogImage, as: 'images' }]
+      include: [{ model: BlogImage, as: 'images' }]
     });
 
     res.json(updatedBlog);
