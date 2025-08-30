@@ -38,7 +38,8 @@ const Comment = sequelize.define('Comment', {
     validate: {
       isIn: [['active', 'archived']]
     }
-  },
+  }
+}, {
   timestamps: true,
   indexes: [
     {
